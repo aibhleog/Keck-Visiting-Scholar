@@ -1,4 +1,5 @@
 # Keck Visiting Scholar work
+-----------------
 ## MOSFIRE upgrades & added features
 This is a repository for MOSFIRE code related to my Keck Visiting Scholar (KVS) work with Dr. Josh Walawender.  In general, this repository focuses on the following items:
 
