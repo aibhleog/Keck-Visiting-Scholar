@@ -18,7 +18,8 @@ from seeing_map import *
 
 
 # -- READING IN DATA -- #
-df = pd.read_csv('plots-data/keck_masks.dat',delimiter='\s+',converters={'star_slit': lambda x: x.split(','),'star_cols': lambda x: x.split(',')})
+df = pd.read_csv('plots-data/keck_masks.dat',delimiter='\s+',
+    converters={'star_slit': lambda x: x.split(','),'star_cols': lambda x: x.split(',')})
 
 # -- Creating Drift() object -- #
 test = Drift()
