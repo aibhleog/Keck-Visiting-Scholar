@@ -1,0 +1,77 @@
+'''
+Module for measuring and displaying the seeing for a given mask.
+The following methods exist in this module:
+
+    get_seeing() -- takes a Drift() object and returns seeing
+                    measurements for both offsets (assumes ABAB)
+    seeing_map() -- given frame numbers and measured seeing,
+                    returns a map of the seeing for both nods
+                    as a function of frame number (assumes ABAB)
+
+Future upgrades:
+> changing seeing_map() to plot UTC vs seeing
+> overlay airmass
+'''
+
+__author__ = 'Taylor Hutchison'
+__email__ = 'aibhleog@tamu.edu'
+__version__ = 'Sept2019'
+
+import pandas as pd
+from drift import *
+
+def get_seeing(home,drift_obj):
+    '''
+    Fits a gaussian to each raw frame's star and produces the 
+    seeing measurements.
+    
+    INPUTS ---- home:   path to directory containing MOSFIRE data
+                drift_obj:  a drift_obj() object with defined variables
+    
+    RETURNS --- two arrays describing seeing for each nod (assumes ABAB)
+    '''
+    all_frames = drift_obj.mask_frames(home=home)
+    nod_A, nod_B = drift_obj.split_dither(all_frames,home=home)
+
+    # ------------- measuring the fits ------------- #
+    # ---------------------------------------------- #
+    cen_A, A_A, sig_A, num_A = drift_obj.fit_all(nod_A,home=home)   
+    cen_B, A_B, sig_B, num_B = drift_obj.fit_all(nod_B,home=home)   
+    # ---------------------------------------------- #
+
+    # takes the sigma and uses FWHM = sigma*2.35 (approximation)
+    # to get the FWHM value, then converts pixels to " by the 
+    # MOSFIRE conversion of 0.18 "/pixel
+    seeing_A = sig_A * 2.35 * 0.18 # "/pixel
+    seeing_B = sig_B * 2.35 * 0.18 # "/pixel
+    return seeing_A,seeing_B
+
+
+def seeing_map(frame,seeing,drift_obj,saveit=False):
+    '''
+    Produces a seeing map as a function of frame.
+    
+    INPUTS ---- frame:      2XN array, ex. [nod_A,nod_B]
+                seeing:     2XN array, ex. [seeing_A,seeing_B]
+    
+    RETURNS --- plot of the seeing map
+    '''
+    plt.figure(figsize=(9,6))
+    plt.scatter(frame[0],seeing[0],edgecolor='k',s=60,label='Nod A')
+    plt.scatter(frame[1],seeing[1],edgecolor='k',marker='^',s=60,label='Nod B')
+
+    plt.text(0.975,0.92,'Mask: %s'%(drift_obj.mask),ha='right',\
+             transform=plt.gca().transAxes,fontsize=15)
+    plt.text(0.975,0.88,'Date: %s'%(drift_obj.date),ha='right',\
+             transform=plt.gca().transAxes,fontsize=16)
+
+    plt.legend(loc=2)
+    plt.xlabel('frame number')
+    plt.ylabel('seeing ["]')
+    plt.ylim(0.4,1.6)
+
+    plt.tight_layout()
+    if saveit == True: 
+        plt.savefig(f'plots-data/seeing_map_{drift_obj.date}_{drift_obj.mask}.png')
+    plt.show()
+    plt.close()
