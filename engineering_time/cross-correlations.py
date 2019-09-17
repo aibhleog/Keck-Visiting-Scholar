@@ -4,7 +4,9 @@ NOTE:   Currently still under construction!
             repository.  If you would like access to this script, please email
             the author and provide an explanation for why you would need it.
 
-This script reads in a list of MOSFIRE engineering data and runs cross-correlations between the first frame and the rest.  These data will be used to correct/update the internal flexure compensation system (FCS) for MOSFIRE.
+This script reads in a list of MOSFIRE engineering data and runs cross-correlations 
+between the first frame and the rest.  These data will be used to correct/update the 
+internal flexure compensation system (FCS) for MOSFIRE.
 '''
 
 __author__ = 'Taylor Hutchison'

@@ -1,7 +1,8 @@
 '''
 NOTE:   Currently still under construction!
 
-This module will mask out skylines in raw MOSFIRE data, to be used in the mask_drift.py script.
+This module will mask out skylines in raw MOSFIRE data, 
+to be used in the mask_drift.py script.
 '''
 
 __author__ = 'Taylor Hutchison'
