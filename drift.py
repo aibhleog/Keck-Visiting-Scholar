@@ -1,3 +1,9 @@
+'''
+This file describes the class Drift(), which takes raw MOSFIRE data and
+structures it such that it can be used to track drift and measure the seeing
+as a function of frame (i.e., time).
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 import astropy.io.fits as fits
@@ -12,6 +18,7 @@ import shutil
 import os
 
 __author__ = 'Taylor Hutchison'
+__email__ = 'aibhleog@tamu.edu'
 __year__ = '2019'
 
 import sys

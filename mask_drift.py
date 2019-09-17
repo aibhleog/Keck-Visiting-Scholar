@@ -1,88 +1,78 @@
+'''
+Module for measuring and displaying the drift for a given mask.
+The following methods exist in this module:
+
+    get_drift() --- takes a Drift() object and returns drift
+                    measurements for both offsets (assumes ABAB)
+    drift_map() --- given frame numbers and measured offsets,
+                    returns a map of the drift for both nods
+                    as a function of frame number (assumes ABAB)
+
+Future upgrades:
+> changing drift_map() to plot UTC vs drift
+> overlay elevation
+'''
+
 import pandas as pd
 from drift import *
 
-df = pd.read_csv('/home/aibhleog/Desktop/observing/drift/Keck-Visiting-Scholar/'
-                 'plots-data/keck_masks.dat',delimiter='\s+')
+__author__ = 'Taylor Hutchison'
+__email__ = 'aibhleog@tamu.edu'
+__year__ = '2019'
 
-# TESTING ON 2018DEC12 DATA for COSMOS
-test = Drift()
+def get_drift(home,drift_obj):
+    '''
+    Finds the peak of the emission (spatially) for a star in a mask, 
+    measures the drift by comparing every raw frame to the spatial
+    location of the first frame.
+    
+    INPUTS ---- home:   path to directory containing MOSFIRE data
+                drift_obj:  a drift_obj() object with defined variables
+    
+    RETURNS --- two arrays describing drift for each nod (assumes ABAB)
+    '''
+    # -- getting list of files for both dithers
+    all_frames = drift_obj.mask_frames(home=home)
+    nod_A, nod_B = drift_obj.split_dither(all_frames,home=home)
 
-test.date = '2018nov25'
-test.mask = 'UDS_2018B_J'
-test.dither = 1.5
-test.band = 'J'
+    # ------------- measuring the fits ------------- #
+    # ---------------------------------------------- #
+    cen_A, A_A, sig_A, num_A = drift_obj.fit_all(nod_A,home=home)   
+    cen_B, A_B, sig_B, num_B = drift_obj.fit_all(nod_B,home=home)   
+    # ---------------------------------------------- #
 
-test.row_start = 92
-test.row_end = 173
-test.col_start = 810
-test.col_end = 815
-
-
-# -- getting list of files for both dithers
-home = '/home/aibhleog/Desktop/observing/'
-#home = '/run/media/aibhleog/eve_lily/observing-keck2018/'
-all_frames = test.mask_frames(home=home)
-nod_A, nod_B = test.split_dither(all_frames,home=home)
-
-
-# ------------- measuring the fits ------------- #
-# ---------------------------------------------- #
-mean, A, sig, num = test.fit_all(nod_A,home=home)   
-df_A = pd.DataFrame({'frame':num,'cen':mean,'A':A,'sig':sig})
-
-mean, A, sig, num = test.fit_all(nod_B,home=home)   
-df_B = pd.DataFrame({'frame':num,'cen':mean,'A':A,'sig':sig})
-# ---------------------------------------------- #
-
-df_A['offset'] = (df_A.loc[0,'cen']-df_A.cen.values) * 0.18 # "/pixel
-df_B['offset'] = (df_B.loc[0,'cen']-df_B.cen.values) * 0.18 # "/pixel
-df_A['seeing'] = df_A.sig.values * 2.35 * 0.18 # "/pixel
-df_B['seeing'] = df_B.sig.values * 2.35 * 0.18 # "/pixel
+    off_A = (cen_A[0]-cen_A) * 0.18 # "/pixel
+    off_B = (cen_B[0]-cen_B) * 0.18 # "/pixel
+    return off_A, off_B
 
 
-# LOOKING AT THE DATA
+def drift_map(frame,offset,drift_obj,saveit=False):
+    '''
+    Produces a drift map as a function of frame.
+    
+    INPUTS ---- frame:      2XN array, ex. [nod_A,nod_B]
+                drift:      2XN array, ex. [off_A,off_B]
+    
+    RETURNS --- plot of the seeing map
+    '''
+    plt.figure(figsize=(9,6))
+    plt.scatter(frame[0],offset[0],edgecolor='k',s=60,label='Nod A')
+    plt.scatter(frame[1],offset[1],edgecolor='k',marker='^',s=60,label='Nod B')
 
-# -- OFFSET AS FUNCTION OF TIME (i.e., FRAME) -- #
-# ---------------------------------------------- #
-plt.figure(figsize=(9,6))
-plt.scatter(df_A.frame,df_A.offset,edgecolor='k',s=60,label='Nod A')
-plt.scatter(df_B.frame,df_B.offset,edgecolor='k',marker='^',s=60,label='Nod B')
+    plt.text(0.975,0.05,'Mask: %s'%(drift_obj.mask),ha='right',\
+             transform=plt.gca().transAxes,fontsize=15)
+    plt.text(0.975,0.1,'Date: %s'%(drift_obj.date),ha='right',\
+             transform=plt.gca().transAxes,fontsize=16)
 
-plt.text(0.975,0.05,'Mask: %s'%(test.mask),ha='right',\
-         transform=plt.gca().transAxes,fontsize=15)
-plt.text(0.975,0.1,'Date: %s'%(test.date),ha='right',\
-         transform=plt.gca().transAxes,fontsize=16)
+    plt.legend(loc=2)
+    plt.xlabel('frame number')
+    plt.ylabel('$y_0 - y$ ["]')
+    plt.ylim(-0.2,0.4)
 
-plt.legend(loc=2)
-plt.xlabel('frame number')
-plt.ylabel('$y_0 - y$ ["]')
-plt.ylim(-0.2,0.4)
+    plt.tight_layout()
+    if saveit == True: 
+        plt.savefig(f'plots-data/seeing_map_{drift_obj.date}_{drift_obj.mask}.png')
+    plt.show()
+    plt.close()
 
-plt.tight_layout()
-plt.show()
-plt.close()
-# ============================================== #
-
-
-# -- SEEING MAP AS FUNCTION OF TIME (i.e., FRAME) -- #
-# -------------------------------------------------- #
-plt.figure(figsize=(9,6))
-plt.scatter(df_A.frame,df_A.seeing,edgecolor='k',s=60,label='Nod A')
-plt.scatter(df_B.frame,df_B.seeing,edgecolor='k',marker='^',s=60,label='Nod B')
-
-plt.text(0.975,0.92,'Mask: %s'%(test.mask),ha='right',\
-         transform=plt.gca().transAxes,fontsize=15)
-plt.text(0.975,0.88,'Date: %s'%(test.date),ha='right',\
-         transform=plt.gca().transAxes,fontsize=16)
-
-plt.legend(loc=2)
-plt.xlabel('frame number')
-plt.ylabel('seeing ["]')
-plt.ylim(0.4,1.6)
-
-plt.tight_layout()
-plt.show()
-plt.close()
-# ================================================== #
-
-test.show_me_all_profiles(np.concatenate((nod_A,nod_B)),home=home)
+    
