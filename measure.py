@@ -3,9 +3,7 @@ NOTE:   This script reads in data ran from a file that does not exist in this
             repository.  If you would like access to this file, please email
             the author and provide an explanation for why you would need it.
 
-Code used to run the modules in this directory.
-To do so, will read in the dataframe 'keck_masks.dat' which holds the current
-MOSFIRE masks used to test this code.
+Code used to run the modules in this directory.  To do so, will read in the dataframe 'keck_masks.dat' which holds the current MOSFIRE masks used to test this code.
 '''
 
 __author__ = 'Taylor Hutchison'

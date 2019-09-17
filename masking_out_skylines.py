@@ -1,17 +1,9 @@
-from drift import *
+'''
+NOTE:   Currently still under construction!
 
-# masking out skylines in one raw frame
-test = Drift()
+This module will mask out skylines in raw MOSFIRE data, to be used in the mask_drift.py script.
+'''
 
-test.date = '2018nov25'
-test.mask = 'UDS_2018B_J'
-test.dither = 1.5
-test.band = 'J'
-
-test.row_start = 92
-test.row_end = 173
-test.col_start = 0
-test.col_end = -1
-
-home = '/home/aibhleog/Desktop/observing/'
-filename = 'm181125'
+__author__ = 'Taylor Hutchison'
+__email__ = 'aibhleog@tamu.edu'
+__version__ = 'Sept2019'

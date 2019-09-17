@@ -4,6 +4,10 @@ structures it such that it can be used to track drift and measure the seeing
 as a function of frame (i.e., time).
 '''
 
+__author__ = 'Taylor Hutchison'
+__email__ = 'aibhleog@tamu.edu'
+__version__ = 'Sept2019'
+
 import numpy as np
 import matplotlib.pyplot as plt
 import astropy.io.fits as fits
@@ -16,10 +20,6 @@ from astropy.stats import sigma_clip
 import pandas as pd
 import shutil
 import os
-
-__author__ = 'Taylor Hutchison'
-__email__ = 'aibhleog@tamu.edu'
-__year__ = '2019'
 
 import sys
 if sys.version_info[0] < 3:

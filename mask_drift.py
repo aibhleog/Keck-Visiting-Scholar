@@ -13,12 +13,12 @@ Future upgrades:
 > overlay elevation
 '''
 
-import pandas as pd
-from drift import *
-
 __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
-__year__ = '2019'
+__version__ = 'Sept2019'
+
+import pandas as pd
+from drift import *
 
 def get_drift(home,drift_obj):
     '''
