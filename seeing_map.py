@@ -18,9 +18,14 @@ __email__ = 'aibhleog@tamu.edu'
 __version__ = 'Sept2019'
 
 import pandas as pd
+import matplotlib.dates as md
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+from pandas.plotting import register_matplotlib_converters
 from drift import *
 
-def get_seeing(home,drift_obj):
+register_matplotlib_converters()
+
+def get_seeing(drift_obj):
     '''
     Fits a gaussian to each raw frame's star and produces the 
     seeing measurements.
@@ -28,26 +33,27 @@ def get_seeing(home,drift_obj):
     INPUTS ---- home:   path to directory containing MOSFIRE data
                 drift_obj:  a drift_obj() object with defined variables
     
-    RETURNS --- two arrays describing seeing for each nod (assumes ABAB)
+    RETURNS --- six arrays (grouped 2 & 2 & 2) describing frame number, 
+                UTC, & seeing for each nod (assumes ABAB)
     '''
-    all_frames = drift_obj.mask_frames(home=home)
-    nod_A, nod_B = drift_obj.split_dither(all_frames,home=home)
+    nod_A, nod_B = drift_obj.split_dither()
+    utc_A, utc_B = drift_obj.get_UTC(nod_A), drift_obj.get_UTC(nod_B)
 
     # ------------- measuring the fits ------------- #
     # ---------------------------------------------- #
-    cen_A, A_A, sig_A, num_A = drift_obj.fit_all(nod_A,home=home)   
-    cen_B, A_B, sig_B, num_B = drift_obj.fit_all(nod_B,home=home)   
+    cen_A, A_A, sig_A, num_A = drift_obj.fit_all(nod_A)   
+    cen_B, A_B, sig_B, num_B = drift_obj.fit_all(nod_B)   
     # ---------------------------------------------- #
 
     # takes the sigma and uses FWHM = sigma*2.35 (approximation)
     # to get the FWHM value, then converts pixels to " by the 
     # MOSFIRE conversion of 0.18 "/pixel
-    seeing_A = sig_A * 2.35 * 0.18 # "/pixel
-    seeing_B = sig_B * 2.35 * 0.18 # "/pixel
-    return seeing_A,seeing_B
+    seeing_A = np.asarray(sig_A) * 2.35 * 0.18 # "/pixel
+    seeing_B = np.asarray(sig_B) * 2.35 * 0.18 # "/pixel
+    return [num_A, num_B], [utc_A, utc_B], [seeing_A, seeing_B]
 
 
-def seeing_map(frame,seeing,drift_obj,saveit=False):
+def seeing_map(time,seeing,drift_obj,saveit=False):
     '''
     Produces a seeing map as a function of frame.
     
@@ -56,20 +62,29 @@ def seeing_map(frame,seeing,drift_obj,saveit=False):
     
     RETURNS --- plot of the seeing map
     '''
+    
+    # Formatting UTC   
+    time[0] = [dt.strptime(i,'%H:%M:%S.%f') for i in time[0]]
+    time[1] = [dt.strptime(i,'%H:%M:%S.%f') for i in time[1]]
+    print(time[0][0],time[1][0])
+    
+    # plotting information
     plt.figure(figsize=(9,6))
-    plt.scatter(frame[0],seeing[0],edgecolor='k',s=60,label='Nod A')
-    plt.scatter(frame[1],seeing[1],edgecolor='k',marker='^',s=60,label='Nod B')
+    plt.scatter(time[0],seeing[0],edgecolor='k',s=60,label='Nod A')
+    plt.scatter(time[1],seeing[1],edgecolor='k',marker='^',s=60,label='Nod B')
 
-    plt.text(0.975,0.92,'Mask: %s'%(drift_obj.mask),ha='right',\
+    plt.text(0.975,0.94,'Mask: %s'%(drift_obj.mask),ha='right',\
              transform=plt.gca().transAxes,fontsize=15)
     plt.text(0.975,0.88,'Date: %s'%(drift_obj.date),ha='right',\
              transform=plt.gca().transAxes,fontsize=16)
 
     plt.legend(loc=2)
-    plt.xlabel('frame number')
+    plt.xlabel('UTC')
     plt.ylabel('seeing ["]')
     plt.ylim(0.4,1.6)
-
+    plt.gca().set_xlim(time[0][0],time[1][-1])
+    plt.gca().xaxis.set_major_formatter(md.DateFormatter('%H:%M'))
+    
     plt.tight_layout()
     if saveit == True: 
         plt.savefig(f'plots-data/seeing_map_{drift_obj.date}_{drift_obj.mask}.png')

@@ -20,7 +20,7 @@ __version__ = 'Sept2019'
 import pandas as pd
 from drift import *
 
-def get_drift(home,drift_obj):
+def get_drift(drift_obj):
     '''
     Finds the peak of the emission (spatially) for a star in a mask, 
     measures the drift by comparing every raw frame to the spatial
@@ -29,21 +29,21 @@ def get_drift(home,drift_obj):
     INPUTS ---- home:   path to directory containing MOSFIRE data
                 drift_obj:  a drift_obj() object with defined variables
     
-    RETURNS --- two arrays describing drift for each nod (assumes ABAB)
+    RETURNS --- four arrays (grouped 2 & 2) describing frame number & drift  
+                for each nod (assumes ABAB)
     '''
     # -- getting list of files for both dithers
-    all_frames = drift_obj.mask_frames(home=home)
-    nod_A, nod_B = drift_obj.split_dither(all_frames,home=home)
+    nod_A, nod_B = drift_obj.split_dither()
 
     # ------------- measuring the fits ------------- #
     # ---------------------------------------------- #
-    cen_A, A_A, sig_A, num_A = drift_obj.fit_all(nod_A,home=home)   
-    cen_B, A_B, sig_B, num_B = drift_obj.fit_all(nod_B,home=home)   
+    cen_A, A_A, sig_A, num_A = drift_obj.fit_all(nod_A)   
+    cen_B, A_B, sig_B, num_B = drift_obj.fit_all(nod_B)   
     # ---------------------------------------------- #
 
     off_A = (cen_A[0]-cen_A) * 0.18 # "/pixel
     off_B = (cen_B[0]-cen_B) * 0.18 # "/pixel
-    return off_A, off_B
+    return [num_A, num_B], [off_A, off_B]
 
 
 def drift_map(frame,offset,drift_obj,saveit=False):

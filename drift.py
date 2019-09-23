@@ -41,6 +41,7 @@ class Drift:
     mask = ''       # mask name, ex. UDS_MOSFIRE_J
     dither = 0.0    # the dither in " of the mask (currently assumes ABAB)
     band = ''       # MOSFIRE band; choose from Y, J, H, K
+    home = ''       # path for the MOSFIRE data
     
     # information about the star in the mask
     row_start = 0   # the yvalue for the bottom of the star's slit
@@ -50,43 +51,50 @@ class Drift:
     
     # LIST OF RAW FRAMES FOR CHOSEN MASK
     # -- full list of frames
-    def mask_frames(self,home=''):
+    def mask_frames(self):
         '''
         Returns the list of MOSFIRE raw frames that are targeting the mask
         of choice. Will make distinction between calibrations and on-sky data.
         '''
-        path = home+'%s/'%self.date
+        path = self.home+'%s/'%self.date
+        #print(path)
         
         # converts the mask name into the format for the file names
         mfile = dt.strptime(self.date,'%Y%b%d').strftime('%y%m%d')
-        #print(mfile)
+        #print('m'+mfile)
         
         allfiles = np.asarray(os.listdir(path))
+        #allfiles = allfiles[]
         mfiles = [f[:7] for f in allfiles] # fast way to ignore other files
         raw_frames = allfiles[np.asarray(mfiles) == 'm'+mfile]
         raw_frames = np.sort(raw_frames)
         
         mask_frames = []
         for f in raw_frames:
+            #print(f)
             head = fits.getheader(path+f)
-            if head['object'] == self.mask:
-                mask_frames.append(f)
+            try:
+                if head['OBJECT'] == self.mask:
+                    #print(f)
+                    mask_frames.append(f)
+            except KeyError: pass
         return mask_frames
     
     # -- splitting into both dithers
-    def split_dither(self,mask_frames,home=''):
+    def split_dither(self):
         '''
         Returns the list of MOSFIRE raw frames that are targeting the mask
         of choice, split into the two dithers.
         '''
-        path = home+'%s/'%self.date
+        path = self.home+'%s/'%self.date
+        mask_frames = self.mask_frames()
         
         nod_A, nod_B = [],[]
         for filename in mask_frames:
             head = fits.getheader(path+filename)
-            if head['gratmode'] == 'spectroscopy': # removes alignment frames
-                if head['yoffset'] == self.dither: nod_A.append(filename)
-                elif head['yoffset'] == -self.dither: nod_B.append(filename)
+            if head['GRATMODE'] == 'spectroscopy': # removes alignment frames
+                if head['YOFFSET'] == self.dither: nod_A.append(filename)
+                elif head['YOFFSET'] == -self.dither: nod_B.append(filename)
                 else: raise Exception('ABAB dither pattern not found.')
             else: pass
                 
@@ -95,11 +103,11 @@ class Drift:
     
     
     # FITTING MODEL TO STAR'S PROFILE
-    def cut_out(self,filename,home=''):
+    def cut_out(self,filename):
         '''
         Creates the cutout for the star's 2D spectrum.
         '''
-        path = home+'%s/'%self.date  
+        path = self.home+'%s/'%self.date  
         
         star_img = fits.getdata(path+filename)
         profile_2D = star_img[self.row_start:self.row_end,self.col_start:self.col_end].copy()
@@ -114,33 +122,30 @@ class Drift:
         
         return profile_2D
         
-    def fit_model(self,filename,home=''):
+    def fit_model(self,filename):
         '''
         Creating the mask star's profile given a handful of columns to sum 
         over (to increase the S/N), this function fits this profile.
-        The input parameters required:
-
-            filename:   str, name of raw MOSFIRE file to be read in
-            row_start:  int, the yvalue for the bottom of the star's slit
-            row_end:    int, the yvalue for the top of the star's slit
-            col_start:  int, the xvalue for the first column (no skylines please)
-            col_end:    int, the xvalue for the last column (no skylines please)
+        
+        INPUTS ---- filename:   str, name of raw MOSFIRE file to be read in
+                    row_start:  int, the yvalue for the bottom of the star's slit
+                    row_end:    int, the yvalue for the top of the star's slit
+                    col_start:  int, the xvalue for the first column (no skylines please)
+                    col_end:    int, the xvalue for the last column (no skylines please)
             
-        Returns the fit paramters of the mask star:
-
-            mean:       float, center pixel of profile
-            A:          float, value of counts at peak
-            sig:        float, standard deviation -- can get FWHM by ~2.35*sig
+        RETURNS --- mean:       float, center pixel of profile
+                    A:          float, value of counts at peak
+                    sig:        float, standard deviation -- can get FWHM by ~2.35*sig
 
         '''
-        path = home+'%s/'%self.date    
+        path = self.home+'%s/'%self.date    
         
         def gauss(xaxis, mean, A, sig, B): 
             # simple gaussian fit
             return A * np.exp(-np.power(xaxis-mean, 2.)/(2*np.power(sig, 2.))) + B
 
         # -- reading in data for the star
-        profile_2D = self.cut_out(filename,home=home)
+        profile_2D = self.cut_out(filename)
         profile = np.sum(profile_2D,axis=1) # summing over a few columns to increase S/N
 
         # ---- fitting the profile of the star
@@ -152,16 +157,42 @@ class Drift:
         mean, A, sig, B = popt
         return mean, A, sig
     
+    def get_UTC(self,filename):
+        '''
+        Pulling UTC information for a given filename or multiple filenames.
+        
+        INPUTS ---- filename:   str, name of raw MOSFIRE file to be read in
+            
+        RETURNS --- frame:      int or 1XN array
+                    utc_value:  string or array, UTC information for frames
+        '''
+        path = self.home+'%s/'%self.date
+        
+        try: len(filename); one = False # more than one file
+        except TypeError: one = True
+            
+        if one == True:
+            head = fits.getheader(path+filename)
+            utc = head['utc']
+        else:
+            utc = []
+            for i in range(len(filename)):
+                head = fits.getheader(path+filename[i])
+                utc.append(head['utc'])
+                
+        return utc
+    
+    
     # CONVENIENCE FUNCTIONS
     # retrieving the fit for an entire dataset
-    def fit_all(self,frames,home=''):
+    def fit_all(self,frames):
         '''
         Runs the fitting function on a large number of frames.
         Returns the fit parameters and the frame numbers.
         '''
         all_centers, all_As, all_sigs, frame_number = [],[],[],[]
         for filename in frames:
-            mean, A, sig = self.fit_model(filename,home=home)
+            mean, A, sig = self.fit_model(filename)
             all_centers.append(mean)
             all_As.append(A)
             all_sigs.append(sig)
@@ -170,18 +201,18 @@ class Drift:
         return all_centers, all_As, all_sigs, frame_number
     
     # plotting all of the profiles for inspection
-    def show_me_all_profiles(self,frames,home=''):
+    def show_me_all_profiles(self,frames):
         '''
         Given frames, makes the cutouts, collapses spectrally,
         and plots all of the profiles for inspection.
         '''
-        path = home+'%s/'%self.date    
+        path = self.home+'%s/'%self.date    
 
         # plotting the profiles
         plt.figure(figsize=(9,6))
         for filename in frames:
             # -- reading in data for the star
-            profile_2D = self.cut_out(filename,home=home)
+            profile_2D = self.cut_out(filename)
             profile = np.sum(profile_2D,axis=1)
             plt.plot(profile)
         
