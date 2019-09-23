@@ -162,9 +162,7 @@ class Drift:
         Pulling UTC information for a given filename or multiple filenames.
         
         INPUTS ---- filename:   str, name of raw MOSFIRE file to be read in
-            
-        RETURNS --- frame:      int or 1XN array
-                    utc_value:  string or array, UTC information for frames
+        RETURNS --- utc_value:  string or array, UTC information for frames
         '''
         path = self.home+'%s/'%self.date
         
