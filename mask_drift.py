@@ -46,7 +46,7 @@ def get_drift(drift_obj):
     return [num_A, num_B], [off_A, off_B]
 
 
-def drift_map(frame,offset,drift_obj,saveit=False):
+def drift_map(frame,offset,drift_obj,savefig=False):
     '''
     Produces a drift map as a function of frame.
     
@@ -59,19 +59,22 @@ def drift_map(frame,offset,drift_obj,saveit=False):
     plt.scatter(frame[0],offset[0],edgecolor='k',s=60,label='Nod A')
     plt.scatter(frame[1],offset[1],edgecolor='k',marker='^',s=60,label='Nod B')
 
-    plt.text(0.975,0.05,'Mask: %s'%(drift_obj.mask),ha='right',\
+    plt.text(0.025,0.05,'Mask: %s'%(drift_obj.mask),\
              transform=plt.gca().transAxes,fontsize=15)
-    plt.text(0.975,0.1,'Date: %s'%(drift_obj.date),ha='right',\
+    plt.text(0.025,0.1,'Date: %s'%(drift_obj.date),\
              transform=plt.gca().transAxes,fontsize=16)
 
     plt.legend(loc=2)
     plt.xlabel('frame number')
     plt.ylabel('$y_0 - y$ ["]')
-    plt.ylim(-0.2,0.4)
+    if min(offset[0]) < -0.2 and min(offset[0]) > -2:
+        plt.ylim(min(offset[0])+min(offset[0])*0.3,0.4)
+    else:
+        plt.ylim(-0.2,0.4)
 
     plt.tight_layout()
-    if saveit == True: 
-        plt.savefig(f'plots-data/seeing_map_{drift_obj.date}_{drift_obj.mask}.png')
+    if savefig == True: 
+        plt.savefig(f'plots-data/drift/drift_map_{drift_obj.date}_{drift_obj.mask}.png')
     plt.show()
     plt.close()
 

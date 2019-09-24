@@ -53,7 +53,7 @@ def get_seeing(drift_obj):
     return [num_A, num_B], [utc_A, utc_B], [seeing_A, seeing_B]
 
 
-def seeing_map(time,seeing,drift_obj,saveit=False):
+def seeing_map(time,seeing,drift_obj,savefig=False):
     '''
     Produces a seeing map as a function of frame.
     
@@ -66,10 +66,12 @@ def seeing_map(time,seeing,drift_obj,saveit=False):
     # Formatting UTC   
     time[0] = [dt.strptime(i,'%H:%M:%S.%f') for i in time[0]]
     time[1] = [dt.strptime(i,'%H:%M:%S.%f') for i in time[1]]
-    print(time[0][0],time[1][0])
+    #print(time[0][0],time[1][0])
     
     # plotting information
     plt.figure(figsize=(9,6))
+    plt.gca().xaxis.set_major_formatter(md.DateFormatter('%H:%M'))
+    
     plt.scatter(time[0],seeing[0],edgecolor='k',s=60,label='Nod A')
     plt.scatter(time[1],seeing[1],edgecolor='k',marker='^',s=60,label='Nod B')
 
@@ -81,12 +83,11 @@ def seeing_map(time,seeing,drift_obj,saveit=False):
     plt.legend(loc=2)
     plt.xlabel('UTC')
     plt.ylabel('seeing ["]')
-    plt.ylim(0.4,1.6)
-    plt.gca().set_xlim(time[0][0],time[1][-1])
-    plt.gca().xaxis.set_major_formatter(md.DateFormatter('%H:%M'))
+    plt.ylim(0.4,2)
+    plt.xlim(time[0][0],time[1][-1])
     
     plt.tight_layout()
-    if saveit == True: 
-        plt.savefig(f'plots-data/seeing_map_{drift_obj.date}_{drift_obj.mask}.png')
+    if savefig == True: 
+        plt.savefig(f'plots-data/seeing/seeing_map_{drift_obj.date}_{drift_obj.mask}.png')
     plt.show()
-    plt.close()
+    plt.close('all')

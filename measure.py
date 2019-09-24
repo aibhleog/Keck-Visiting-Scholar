@@ -23,7 +23,7 @@ df = pd.read_csv('plots-data/keck_masks.dat',delimiter='\s+',
 
 # -- Creating Drift() object -- #
 test = Drift()
-indx = 7
+indx = 13
 
 test.home = df.loc[indx,'path']
 test.date = df.loc[indx,'date']
@@ -39,6 +39,6 @@ test.col_end = int(df.loc[indx,'star_cols'][1])
 
 # -- running seeing & drift maps -- #
 frame,utc,seeing = get_seeing(drift_obj=test)
-seeing_map(utc, seeing, drift_obj=test)
+seeing_map(utc,seeing,drift_obj=test,savefig=True)
 
-#drift_map(*get_drift(drift_obj=test), drift_obj=test)
+drift_map(*get_drift(drift_obj=test),drift_obj=test,savefig=True)
