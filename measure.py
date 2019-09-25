@@ -18,12 +18,12 @@ from seeing_map import *
 
 
 # -- READING IN DATA -- #
-df = pd.read_csv('plots-data/keck_masks.dat',delimiter='\s+',
+df = pd.read_csv('plots-data/keck_masks.dat',delimiter='|',
     converters={'star_slit': lambda x: x.split(','), 'star_cols': lambda x: x.split(',')})
 
 # -- Creating Drift() object -- #
 test = Drift()
-indx = 13
+indx = 0
 
 test.home = df.loc[indx,'path']
 test.date = df.loc[indx,'date']

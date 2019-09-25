@@ -1,0 +1,3 @@
+[submodule "KVS-data"]
+	path = KVS-data
+	url = https://github.com/aibhleog/KVS-data
