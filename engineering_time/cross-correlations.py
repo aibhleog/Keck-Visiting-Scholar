@@ -74,7 +74,7 @@ for j in range(len(elevations)):
 print(df,end='\n\n')
 print('Writing dataframe to new file.')
 
-df.to_csv('keck_fcs_measurements.dat',sep='\t',index=False)
+df.to_csv('../KVS-data/keck_fcs_measurements.dat',sep='\t',index=False)
 # pet peeve of Taylor's is how pandas has 'delimiter' for pd.read_csv
 # but requires 'sep' for df.to_csv...
 
