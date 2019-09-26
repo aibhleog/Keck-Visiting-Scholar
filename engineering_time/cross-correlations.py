@@ -4,7 +4,7 @@ NOTE:   Currently still under construction!
             repository.  If you would like access to this script, please email
             the author and provide an explanation for why you would need it.
 
-This script is used to look at how the shifts work. From the source code:
+Calculates the shift for every frame relative to some reference frame. From the source code:
 "image_registration/cross_correlation_shifts.py"
 
 	Examples
@@ -18,6 +18,8 @@ This script is used to look at how the shifts work. From the source code:
 	>>> xoff,yoff = image_registration.cross_correlation_shifts(im1,im2)
 	>>> im1_aligned_to_im2 = np.roll(np.roll(im1,int(yoff),1),int(xoff),0)
 	>>> assert (im1_aligned_to_im2-im2).sum() == 0
+
+Reference frame: el=45, rotpposn=-90 (chosen because oreintation for flats)
 '''
 
 __author__ = 'Taylor Hutchison'
@@ -47,29 +49,35 @@ print('Reading in data.',end='\n\n')
 home = args.path
 date = args.date
 files = np.loadtxt(home+date+'/files.list',dtype='str')
-df = pd.read_csv(home+date+'/fcs_info.dat',delimiter='\s+')
+org_df = pd.read_csv(home+date+'/fcs_info.dat',delimiter='\s+')
+
+# -- clipping out bad target2 values -- #
+t2 = org_df.mode().loc[0,'target2'] # mode value for this keyword
+df = org_df.query(f'{t2-t2*0.2} > target2 > {t2+t2*0.2}').copy()
+df.reset_index(inplace=True)
+
+# -- reference frame -- #
+reference = df.query('el == 45 and rotpposn == -90').loc[0,'file']
+d0 = fits.getdata(home+date+'/'+reference)
 
 # adding columns for xshift and yshift
 df['xshift'] = np.zeros(len(df))
 df['yshift'] = np.zeros(len(df))
 
-print('Starting the cross_correlation_shifts() function.')
 elevations = list(set(df.el))
-# running through set of elevation
-for j in range(len(elevations)):
-	print(f'Starting on elevation {elevations[j]}...')	
-	el_df = df.query(f'el == {elevations[j]}').copy() # important to .copy()
-	indx = el_df.index.values
-	
-	d0 = fits.getdata(home+date+'/'+el_df.loc[indx[0],'file']) # first frame
-	# now running through the rows with this elevation
-	for i in np.arange(1,len(el_df)): # skiping the first frame
-		d1 = fits.getdata(home+date+'/'+el_df.loc[indx[i],'file'])
-		xshift,yshift = ir.cross_correlation_shifts(d0,d1) # returns xshift, yshift
-		df.loc[indx[i],'xshift'] = xshift
-		df.loc[indx[i],'yshift'] = yshift
-		if i == len(el_df)-1: 
-			print(f'Finished with elevation {elevations[j]}, moving on...',end='\n\n')
+rotpposns = list(set(df.rotpposn))
+print('Range of elevation:',np.sort(elevations))
+print('Range of rotpposn:',np.sort(rotpposns),end='\n\n')
+
+# running through all frames
+print(f'Running through all {len(df)} frames.')
+for i in np.arange(len(df)):
+	d1 = fits.getdata(home+date+'/'+el_df.loc[indx[i],'file'])
+	xshift,yshift = ir.cross_correlation_shifts(d0,d1) # returns xshift, yshift
+	df.loc[indx[i],'xshift'] = xshift
+	df.loc[indx[i],'yshift'] = yshift
+	if i == len(el_df)-1: 
+		print(f'Finished with elevation {elevations[j]}, moving on...',end='\n\n')
 	
 print(df,end='\n\n')
 print('Writing dataframe to new file.')

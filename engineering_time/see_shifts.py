@@ -3,6 +3,7 @@ NOTE:   Currently still under construction!
         This script reads in data ran from the cross-correlations script in this
             repository.  If you would like access to this data, please email
             the author and provide an explanation for why you would need it.
+
 '''
 
 __author__ = 'Taylor Hutchison'
@@ -15,13 +16,8 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gd
 
 # reading in the data
-org_df = pd.read_csv('../KVS-data/keck_fcs_measurements.dat',delimiter='\s+')
+df = pd.read_csv('../KVS-data/keck_fcs_measurements.dat',delimiter='\s+')
 
-# -- clipping out bad target2 values -- #
-t2 = org_df.mode().loc[0,'target2'] # mode value for this keyword
-#df = org_df.query(f'{t2-t2*0.2} > target2 > {t2+t2*0.2}').copy()
-#df.reset_index(inplace=True)
-df = org_df.copy()
 
 # visualize the data
 plt.figure(figsize=(9,6))
