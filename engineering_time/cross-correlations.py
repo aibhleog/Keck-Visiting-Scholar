@@ -57,7 +57,9 @@ df = org_df.query(f'{t2-t2*0.2} > target2 > {t2+t2*0.2}').copy()
 df.reset_index(inplace=True)
 
 # -- reference frame -- #
-reference = df.query('el == 45 and rotpposn == -90').loc[0,'file']
+ref_df = df.query('el == 45 and rotpposn == -90').copy()
+ref_df.reset_index(inplace=True) # making ref_df because there can be > 1 match
+reference = ref_df.loc[0,'file']
 d0 = fits.getdata(home+date+'/'+reference)
 
 # adding columns for xshift and yshift
@@ -72,12 +74,11 @@ print('Range of rotpposn:',np.sort(rotpposns),end='\n\n')
 # running through all frames
 print(f'Running through all {len(df)} frames.')
 for i in np.arange(len(df)):
-	d1 = fits.getdata(home+date+'/'+el_df.loc[indx[i],'file'])
+	if i%10 == 0: print(f'At number {i} of {len(df)} frames...')
+	d1 = fits.getdata(home+date+'/'+df.loc[i,'file'])
 	xshift,yshift = ir.cross_correlation_shifts(d0,d1) # returns xshift, yshift
-	df.loc[indx[i],'xshift'] = xshift
-	df.loc[indx[i],'yshift'] = yshift
-	if i == len(el_df)-1: 
-		print(f'Finished with elevation {elevations[j]}, moving on...',end='\n\n')
+	df.loc[i,'xshift'] = round(xshift,6) # enough precision
+	df.loc[i,'yshift'] = round(yshift,6) # enough precision
 	
 print(df,end='\n\n')
 print('Writing dataframe to new file.')

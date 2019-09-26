@@ -10,67 +10,25 @@ __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
 __version__ = 'Sept2019'
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gd
+from visualize import *
 
 # reading in the data
 df = pd.read_csv('../KVS-data/keck_fcs_measurements.dat',delimiter='\s+')
-
-
-# visualize the data
-plt.figure(figsize=(9,6))
 elevations = list(set(df.el))
-rotpposn = np.sort(list(set(df.rotpposn)))
+rotpposns = list(set(df.rotpposn))
+print('Range of elevation:',np.sort(elevations))
+print('Range of rotpposn:',np.sort(rotpposns),end='\n\n')
 
-# running through set of elevation
-for j in range(len(elevations)):
-	el_df = df.query(f'el == {elevations[j]}').copy() # important to .copy()
-	plt.scatter(el_df.xshift,el_df.yshift,c=el_df.rotpposn,cmap='viridis',edgecolor='k',zorder=5)
-	plt.plot(el_df.xshift,el_df.yshift,color='gray',zorder=0)
-	
-cbar = plt.colorbar()
-cbar.set_ticks(rotpposn)
-plt.text(1.21,0.4,'rotpposn',rotation=270,transform=plt.gca().transAxes,fontsize=16)
+# looking at x and y shifts with coloring based upon rotpposn
+xyshift(df)
 
-plt.xlabel('(x$_0 -$ x)$_{elevation}$ [pixels]')
-plt.ylabel('(y$_0 -$ y)$_{elevation}$ [pixels]')
+xshift_rot(df)
 
-plt.tight_layout()
-plt.savefig('test.png')
-plt.close('all')
+yshift_rot(df)
 
+xshift_el(df)
 
-# NOW IN 3D
-# visualize the data
-from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
-fig = plt.figure(figsize=(9,6))
-ax = fig.add_subplot(111, projection='3d')
-
-elevations = list(set(df.el))
-rotpposn = np.sort(list(set(df.rotpposn)))
-
-cmap = plt.get_cmap('RdBu')
-colors = cmap(np.linspace(0,1,len(elevations)+1))
-
-# running through set of elevation
-for j in range(len(elevations)):
-	el_df = df.query(f'el == {elevations[j]}').copy() # important to .copy()
-	ax.scatter(el_df.xshift,el_df.yshift,el_df.rotpposn,edgecolor='k',
-		alpha=1.,color=colors[j],s=100,zorder=5)
-
-ax.azim = 200
-ax.elev = 35
-	
-ax.set_xlabel('(x$_0 -$ x)$_{elevation}$ [pixels]',labelpad=15)
-ax.set_ylabel('(y$_0 -$ y)$_{elevation}$ [pixels]',labelpad=15)
-ax.set_zlabel('rotpposn [degrees]',labelpad=15)
-ax.set_zticklabels(rotpposn)
-
-plt.tight_layout()
-plt.savefig('test3d.png')
-plt.close('all')
+yshift_el(df)
 
 
 
