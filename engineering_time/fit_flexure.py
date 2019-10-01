@@ -75,7 +75,7 @@ for e in range(len(elevations)):
 	coeffs = [fits.loc[e,j] for j in ['A','B','C']]
 	
 	line_fit = fit(rots,elevations[e],*coeffs)
-	ax.scatter(rots,(line_fit/yvals)-1,color=colors[e],s=60,edgecolor='k')
+	ax.scatter(rots,line_fit-yvals,color=colors[e],s=60,edgecolor='k')
 ax.axhline(0,ls=':',color='k',zorder=0)
 
 # labels
