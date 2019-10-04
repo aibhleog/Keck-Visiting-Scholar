@@ -7,4 +7,4 @@ to be used in the mask_drift.py script.
 
 __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
-__version__ = 'Sept2019'
+__version__ = 'Oct2019'

@@ -6,7 +6,7 @@ as a function of frame (i.e., time).
 
 __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
-__version__ = 'Sept2019'
+__version__ = 'Oct2019'
 
 import numpy as np
 import matplotlib.pyplot as plt

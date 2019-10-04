@@ -15,7 +15,7 @@ Future upgrades:
 
 __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
-__version__ = 'Sept2019'
+__version__ = 'Oct2019'
 
 import pandas as pd
 import matplotlib.dates as md
@@ -88,6 +88,6 @@ def seeing_map(time,seeing,drift_obj,savefig=False):
     
     plt.tight_layout()
     if savefig == True: 
-        plt.savefig(f'plots-data/seeing/seeing_map_{drift_obj.date}_{drift_obj.mask}.png')
+        plt.savefig(f'plots-data/seeing/seeing_map_{drift_obj.date}_{drift_obj.mask}.png',dpi=300)
     plt.show()
     plt.close('all')
