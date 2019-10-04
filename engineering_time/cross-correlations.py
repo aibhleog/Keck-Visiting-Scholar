@@ -24,7 +24,7 @@ Reference frame: el=45, rotpposn=-90 (chosen because oreintation for flats)
 
 __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
-__version__ = 'Sept2019'
+__version__ = 'Oct2019'
 
 import numpy as np
 import pandas as pd

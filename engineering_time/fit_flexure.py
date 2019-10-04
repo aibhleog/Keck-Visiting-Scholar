@@ -1,9 +1,18 @@
+'''
+Code used to fix the internal flexure in one reference frame. We plan to compare to the actual FCS model to see the differences.
+'''
+
+__author__ = 'Taylor Hutchison'
+__email__ = 'aibhleog@tamu.edu'
+__version__ = 'Oct2019'
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import matplotlib.gridspec as gd
 import matplotlib.patheffects as PathEffects
+from current_model import * # current model written up by Taylor
 
 # reading in the data
 df = pd.read_csv('../KVS-data/keck_fcs_measurements.dat',delimiter='\s+')
@@ -45,15 +54,16 @@ for e in range(len(elevations)):
 		bounds=((el-el*0.01,55,-np.inf,-np.inf), 	# el doesn't shift, also working to find
 				(el+el*0.01,56,np.inf,np.inf)))		# constant coefficients
 	ax.plot(x,fit(x,*popt),color=colors[e])
-	
+	ax.plot()
+    
 	# adding legend for colors
-	kwargs = {'color':colors[e],'transform':ax.transAxes,'fontsize':15}
+	'''kwargs = {'color':colors[e],'transform':ax.transAxes,'fontsize':15}
 	if e < 3: txt = ax.text(tx,ty-tys*e,el,**kwargs)
 	elif e < 6: txt = ax.text(tx+txs,ty-tys*(e-3),el,**kwargs)
 	elif e < 9: txt = ax.text(tx+txs*2,ty-tys*(e-6),el,**kwargs)
 	elif e < 11: txt = ax.text(tx+txs*3,ty-tys*(e-9),el,**kwargs)	
 	else: txt = ax.text(tx+txs*4,ty-tys*(e-11),el,**kwargs)
-	txt.set_path_effects([PathEffects.withStroke(linewidth=1.2, foreground='k')])
+	txt.set_path_effects([PathEffects.withStroke(linewidth=1.2, foreground='k')])'''
 
 	# adding fits to dataframe
 	fits.loc[e,'A'] = popt[1]
@@ -85,6 +95,7 @@ ax.set_xticks(rotpposns)
 
 plt.tight_layout()
 plt.savefig('yshift_rot.png')
+plt.show()
 plt.close('all')
 
 

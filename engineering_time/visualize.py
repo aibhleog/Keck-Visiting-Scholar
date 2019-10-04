@@ -4,7 +4,7 @@ This script offers different plotting functions for looking at the engineering d
 
 __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
-__version__ = 'Sept2019'
+__version__ = 'Oct2019'
 
 import numpy as np
 import pandas as pd
