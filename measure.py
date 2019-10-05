@@ -22,7 +22,7 @@ df = pd.read_csv('KVS-data/keck_masks.dat',delimiter='|',
     converters={'star_slit': lambda x: x.split(','), 'star_cols': lambda x: x.split(',')})
 
 # running through all of it
-for indx in df.index.values[:5]:
+for indx in df.index.values:
     # -- Creating Drift() object -- #
     test = Drift()
 
