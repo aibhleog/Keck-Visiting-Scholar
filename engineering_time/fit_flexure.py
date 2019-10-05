@@ -45,34 +45,39 @@ ty,tys,tx,txs = 0.28,0.105,0.2,0.05
 # making dataframe to log fits
 ones = np.ones(len(elevations))
 fits = pd.DataFrame({'el':elevations,'A':ones,'B':ones,'C':ones})
-for e in range(len(elevations)):	
-	el = elevations[e] # sorting by elevation
-	p0 = [el,55.5,0.54,0.6] # initial guess used in curve_fit
-	yvals = df.query(f'el == {el}').yshift
-	rots = df.query(f'el == {el}').rotpposn
-	popt,pcov = curve_fit(fit,rots,yvals,p0=p0, 	# fit; using bounds to make sure 
-		bounds=((el-el*0.01,55,-np.inf,-np.inf), 	# el doesn't shift, also working to find
-				(el+el*0.01,56,np.inf,np.inf)))		# constant coefficients
-	ax.plot(x,fit(x,*popt),color=colors[e])
-	ax.plot()
-    
-	# adding legend for colors
-	'''kwargs = {'color':colors[e],'transform':ax.transAxes,'fontsize':15}
-	if e < 3: txt = ax.text(tx,ty-tys*e,el,**kwargs)
-	elif e < 6: txt = ax.text(tx+txs,ty-tys*(e-3),el,**kwargs)
-	elif e < 9: txt = ax.text(tx+txs*2,ty-tys*(e-6),el,**kwargs)
-	elif e < 11: txt = ax.text(tx+txs*3,ty-tys*(e-9),el,**kwargs)	
-	else: txt = ax.text(tx+txs*4,ty-tys*(e-11),el,**kwargs)
-	txt.set_path_effects([PathEffects.withStroke(linewidth=1.2, foreground='k')])'''
+x0,y0 = flexure_comp(-90,45,'J') # reference frame
 
-	# adding fits to dataframe
-	fits.loc[e,'A'] = popt[1]
-	fits.loc[e,'B'] = popt[2]
-	fits.loc[e,'C'] = popt[3]
+for e in range(len(elevations)):	
+    el = elevations[e] # sorting by elevation
+    p0 = [el,55.5,0.54,0.6] # initial guess used in curve_fit
+    yvals = df.query(f'el == {el}').yshift
+    rots = df.query(f'el == {el}').rotpposn
+    popt,pcov = curve_fit(fit,rots,yvals,p0=p0, 	# fit; using bounds to make sure 
+        bounds=((el-el*0.01,55,-np.inf,-np.inf), 	# el doesn't shift, also working to find
+                (el+el*0.01,56,np.inf,np.inf)))		# constant coefficients
+    ax.plot(x,fit(x,*popt),color=colors[e])
+
+    # adding current model
+    xshift,yshift = flexure_comp(np.radians(rots),np.radians(90-el),'J')
+    plt.plot(rots,y0-yshift,color='k',zorder=0)
+
+    # adding legend for colors
+    '''kwargs = {'color':colors[e],'transform':ax.transAxes,'fontsize':15}
+    if e < 3: txt = ax.text(tx,ty-tys*e,el,**kwargs)
+    elif e < 6: txt = ax.text(tx+txs,ty-tys*(e-3),el,**kwargs)
+    elif e < 9: txt = ax.text(tx+txs*2,ty-tys*(e-6),el,**kwargs)
+    elif e < 11: txt = ax.text(tx+txs*3,ty-tys*(e-9),el,**kwargs)	
+    else: txt = ax.text(tx+txs*4,ty-tys*(e-11),el,**kwargs)
+    txt.set_path_effects([PathEffects.withStroke(linewidth=1.2, foreground='k')])'''
+
+    # adding fits to dataframe
+    fits.loc[e,'A'] = popt[1]
+    fits.loc[e,'B'] = popt[2]
+    fits.loc[e,'C'] = popt[3]
 
 # labels
-txt = ax.text(tx-0.015	,ty+0.1,'elevation [degrees]',color='k',transform=ax.transAxes,fontsize=15)
-txt.set_path_effects([PathEffects.withStroke(linewidth=0.6, foreground='k')])
+#txt = ax.text(tx-0.015	,ty+0.1,'elevation [degrees]',color='k',transform=ax.transAxes,fontsize=15)
+#txt.set_path_effects([PathEffects.withStroke(linewidth=0.6, foreground='k')])
 ax.set_title('Reference frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}	$')
 ax.set_ylabel('(y$_0 -$ y) [pixels]')
 ax.set_xticklabels([])
@@ -94,7 +99,7 @@ ax.set_xlabel('rotpposn [degrees]')
 ax.set_xticks(rotpposns)
 
 plt.tight_layout()
-plt.savefig('yshift_rot.png')
+#plt.savefig('yshift_rot.png')
 plt.show()
 plt.close('all')
 

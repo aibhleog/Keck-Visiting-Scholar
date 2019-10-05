@@ -84,7 +84,7 @@ def animate(num):
     blank = np.zeros((2,len(PA)))
 
     line = plt.scatter(blank[0],blank[1],edgecolor='k',c=PA,cmap='viridis',s=120)
-    tex = ax.text(0.97,0.91,'',ha='right',transform=ax.transAxes,fontsize=20)
+    tex = plt.text(0.97,0.91,'',ha='right',transform=ax.transAxes,fontsize=20)
 
     # plotting the outline of the entire model range
     for i in range(len(Z)):
@@ -92,22 +92,21 @@ def animate(num):
         plt.plot(new_x,new_y,color='k',zorder=0,lw=1)
 
     # colorbar legend
-    ax.text(1.2,0.25,'rotpposn [degrees]',rotation=270,fontsize=18,transform=ax.transAxes)
+    ax.text(1.2,0.25,'Zenith ang. [degrees]',rotation=270,fontsize=18,transform=ax.transAxes)
     plt.colorbar()
 
     # need an initial setup function so the animation function can
     # anchor off of it -- this is essential!
     def init():
-        global tex
         line.set_offsets(np.stack((blank[0],blank[1]),axis=1))
         tex.set_text('Zenith ang: 0$^o$')
         return line,tex,
 
     # the function that will actually be changing things in the animation
     def shift(e):
-        new_x, new_y = flexure_comp(np.radians(PA),np.radians(Z[e]),'J')
+        new_x, new_y = flexure_comp(np.radians(PA[e]),np.radians(Z),'J')
         line.set_offsets(np.stack((new_x,new_y),axis=1))
-        tex.set_text('Zenith ang: %.2f$^o$' %round(PA[e],2))
+        tex.set_text('rotpposn: %.2f$^o$' %round(PA[e],2))
         return line,tex,
 
     # all the build up lead to this! Running the animation function...
