@@ -57,7 +57,7 @@ df = org_df.query(f'{t2-t2*0.2} > target2 > {t2+t2*0.2}').copy()
 df.reset_index(inplace=True)
 
 # -- reference frame -- #
-ref_df = df.query('el == 45 and rotpposn == -90').copy()
+ref_df = df.query('el == 85 and rotpposn == 0').copy()
 ref_df.reset_index(inplace=True) # making ref_df because there can be > 1 match
 reference = ref_df.loc[0,'file']
 d0 = fits.getdata(home+date+'/'+reference)
