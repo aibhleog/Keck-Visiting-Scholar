@@ -28,12 +28,12 @@ def xyshift(df,rotcolor=True,savefig=True):
 	else:
 		plt.scatter(df.xshift,df.yshift,edgecolor='k',zorder=5)
 
-	plt.title('Reference frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}	$')
+	plt.title('Reference frame: EL=5$^\mathrm{o}$ ROTPPOSN=0$^\mathrm{o}	$')
 	plt.xlabel('(x$_0 -$ x) [pixels]')
 	plt.ylabel('(y$_0 -$ y) [pixels]')
 
 	plt.tight_layout()
-	if savefig == True: plt.savefig('xyshift.png')
+	if savefig == True: plt.savefig('../plots-data/data_FCS/xyshift.png',dpi=300)
 	else: plt.show()
 	plt.close('all')
 
@@ -51,12 +51,12 @@ def xshift_rot(df,savefig=True):
 	cbar.set_ticks(np.sort(elevations))
 	plt.text(1.16,0.4,'elevation',rotation=270,transform=plt.gca().transAxes,fontsize=16)
 
-	plt.title('Reference frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}	$')
+	plt.title('Reference frame: EL=5$^\mathrm{o}$ ROTPPOSN=0$^\mathrm{o}	$')
 	plt.ylabel('(x$_0 -$ x) [pixels]')
 	plt.xlabel('rotpposn [degrees]')
 
 	plt.tight_layout()
-	if savefig == True: plt.savefig('xshift_rot.png')
+	if savefig == True: plt.savefig('../plots-data/data_FCS/xshift_rot.png',dpi=300)
 	else: plt.show()
 	plt.close('all')
 
@@ -73,12 +73,12 @@ def yshift_rot(df,savefig=True):
 	cbar.set_ticks(np.sort(elevations))
 	plt.text(1.16,0.4,'elevation',rotation=270,transform=plt.gca().transAxes,fontsize=16)
 
-	plt.title('Reference frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}	$')
+	plt.title('Reference frame: EL=5$^\mathrm{o}$ ROTPPOSN=0$^\mathrm{o}	$')
 	plt.ylabel('(y$_0 -$ y) [pixels]')
 	plt.xlabel('rotpposn [degrees]')
 
 	plt.tight_layout()
-	if savefig == True: plt.savefig('yshift_rot.png')
+	if savefig == True: plt.savefig('../plots-data/data_FCS/yshift_rot.png',dpi=300)
 	else: plt.show()
 	plt.close('all')
 
@@ -95,12 +95,12 @@ def xshift_el(df,savefig=True):
 	cbar.set_ticks(np.sort(rotpposns))
 	plt.text(1.21,0.4,'rotpposn',rotation=270,transform=plt.gca().transAxes,fontsize=16)
 
-	plt.title('Reference frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}	$')
+	plt.title('Reference frame: EL=5$^\mathrm{o}$ ROTPPOSN=0$^\mathrm{o}	$')
 	plt.ylabel('(x$_0 -$ x) [pixels]')
 	plt.xlabel('elevation [degrees]')
 
 	plt.tight_layout()
-	if savefig == True: plt.savefig('xshift_el.png')
+	if savefig == True: plt.savefig('../plots-data/data_FCS/xshift_el.png',dpi=300)
 	else: plt.show()
 	plt.close('all')
 
@@ -117,12 +117,12 @@ def yshift_el(df,savefig=True):
 	cbar.set_ticks(np.sort(rotpposns))
 	plt.text(1.21,0.4,'rotpposn',rotation=270,transform=plt.gca().transAxes,fontsize=16)
 
-	plt.title('Reference frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}	$')
+	plt.title('Reference frame: EL=5$^\mathrm{o}$ ROTPPOSN=0$^\mathrm{o}	$')
 	plt.ylabel('(y$_0 -$ y) [pixels]')
 	plt.xlabel('elevation [degrees]')
 
 	plt.tight_layout()
-	if savefig == True: plt.savefig('yshift_el.png')
+	if savefig == True: plt.savefig('../plots-data/data_FCS/yshift_el.png',dpi=300)
 	else: plt.show()
 	plt.close('all')
 
