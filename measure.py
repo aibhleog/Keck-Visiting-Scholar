@@ -21,8 +21,9 @@ from seeing_map import *
 df = pd.read_csv('KVS-data/keck_masks.dat',delimiter='|',
     converters={'star_slit': lambda x: x.split(','), 'star_cols': lambda x: x.split(',')})
 
-# running through all of it
-for indx in df.index.values:
+
+#for indx in df.index.values: # running through all of it
+for indx in [6]:   
     # -- Creating Drift() object -- #
     test = Drift()
 
@@ -36,10 +37,9 @@ for indx in df.index.values:
     test.row_end = int(df.loc[indx,'star_slit'][1])
     test.col_start = int(df.loc[indx,'star_cols'][0])
     test.col_end = int(df.loc[indx,'star_cols'][1])
-
-
+    
     # -- running seeing & drift maps -- #
     frame,utc,seeing = get_seeing(drift_obj=test)
-    seeing_map(utc,seeing,drift_obj=test,savefig=True)
+    #seeing_map(utc,seeing,drift_obj=test)#,savefig=True)
 
-    drift_map(*get_drift(drift_obj=test),drift_obj=test,savefig=True)
+    #drift_map(*get_drift(drift_obj=test),drift_obj=test)#,savefig=True)
