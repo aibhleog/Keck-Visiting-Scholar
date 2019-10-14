@@ -43,7 +43,7 @@ def xyshift(num,savefig=True):
     plt.ylabel('(y$_0 -$ y) [pixels]')
 
     plt.tight_layout()
-    if savefig == True: plt.savefig('model.png')
+    if savefig == True: plt.savefig('../plots-data/data_FCS/model.pdf')
     plt.show()
     plt.close('all')
 
@@ -62,7 +62,7 @@ def yshift_rot(num,savefig=True):
 	plt.ylabel('(y$_0 -$ y) [pixels]')
 	
 	plt.tight_layout()
-	if savefig == True: plt.savefig('../plots-data/data_FCS/model_yshift_rot.png')
+	if savefig == True: plt.savefig('../plots-data/data_FCS/model_yshift_rot.pdf')
 	plt.show()
 	plt.close('all')
 
