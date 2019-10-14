@@ -48,23 +48,23 @@ def xyshift(num,savefig=True):
     plt.close('all')
 
 def yshift_rot(num,savefig=True):
-    plt.figure(figsize=(9,6))
+	plt.figure(figsize=(9,6))
 
-    PA,Z = get_PA_Z(num)
-    cs = colors(num)
-    x0,y0 = flexure_comp(-90,45,'J') # reference frame
+	PA,Z = get_PA_Z(num)
+	cs = colors(num)
+	x0,y0 = flexure_comp(-90,45,'J') # reference frame
 
-    for r in range(len(PA)):
-        xshift,yshift = flexure_comp(np.radians(PA),np.radians(Z[r]),'J')
-        plt.scatter(PA,y0-yshift,edgecolor='k',s=60, color=cs[r])
+	for r in range(len(PA)):
+	    xshift,yshift = flexure_comp(np.radians(PA),np.radians(Z[r]),'J')
+	    plt.scatter(PA,y0-yshift,edgecolor='k',s=60, color=cs[r])
 
-    plt.xlabel('rotpposn [degrees]')
-    plt.ylabel('(y$_0 -$ y) [pixels]')
-
-    plt.tight_layout()
-    if savefig == True: plt.savefig('model_yshift_rot.png')
-    plt.show()
-    plt.close('all')
+	plt.xlabel('rotpposn [degrees]')
+	plt.ylabel('(y$_0 -$ y) [pixels]')
+	
+	plt.tight_layout()
+	if savefig == True: plt.savefig('../plots-data/data_FCS/model_yshift_rot.png')
+	plt.show()
+	plt.close('all')
 
 def animate(num):
     '''
@@ -117,7 +117,7 @@ def animate(num):
     ax.set_ylabel('(y$_0 -$ y) [pixels]')
 
     plt.tight_layout()
-    anim.save('shifts.gif', fps=5, writer='imagemagick',dpi=100) # this will take a while to make
+    anim.save('../plots-data/data_FCS/shifts.gif', fps=5, writer='imagemagick',dpi=100) # this will take a while to make
     #plt.show() # doesn't work in Jupyter Lab
     plt.close('all')
 
