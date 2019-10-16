@@ -87,7 +87,7 @@ ax = plt.subplot(gs[1])
 for e in range(len(elevations)):
 	yvals = df.query(f'el == {el}').yshift
 	rots = df.query(f'el == {el}').rotpposn
-	coeffs = [fits.loc[e,j] for j in ['A','B','C']]
+	#coeffs = [fits.loc[e,j] for j in ['A','B','C']]
 	
 	line_fit = fit(rots,elevations[e],*coeffs)
 	ax.scatter(rots,line_fit-yvals,color=colors[e],s=60,edgecolor='k')
