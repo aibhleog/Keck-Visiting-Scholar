@@ -13,9 +13,19 @@ from scipy.optimize import curve_fit
 import matplotlib.gridspec as gd
 import matplotlib.patheffects as PathEffects
 from current_model import * # current model written up by Taylor
+import argparse
+
+# reading input information
+parser = argparse.ArgumentParser(description="Looking at the cross-correlations for the engineering data where the internal FCS left on.",
+			usage='fcs_on_compare.py ...',
+			epilog='Contact Taylor Hutchison at aibhleog@tamu.edu with questions.')
+parser.add_argument('-b','--band',help='Band data were taken in. (J/H)',required=True)
+parser.add_argument('-s','--savefig',help='Save figure? (y/n)')
+args = parser.parse_args()
+
 
 # reading in the data
-band = 'J'  # J or H
+band = args.band
 df = pd.read_csv(f'../KVS-data/individual_FCS_datasets/keck_FCS_On_{band}_measurements.dat',\
                  delimiter='\t')
 elevations = np.sort(list(set(df.el)))
@@ -53,7 +63,7 @@ txt = ax.text(0.028,0.08,band,fontsize=18,transform=ax.transAxes,color='C0')
 txt.set_path_effects([PathEffects.withStroke(linewidth=1.5, foreground='k')])
     
 # labels
-ax.set_title('FCS is on; Reference frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}$',fontsize=14)
+ax.set_title('FCS is on; Ref. frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}$',fontsize=14)
 ax.set_ylabel('(y$_0 -$ y) [pixels]')
 ax.set_xticklabels([])
 ax.set_xticks(rotpposns)
@@ -66,7 +76,7 @@ ax2.set_xticks(rotpposns)
 ax2.legend(loc=3,bbox_to_anchor=(1,0),fontsize=12)
 
 plt.tight_layout()
-#plt.savefig(f'../plots-data/data_FCS/correlations_FCS_On-{band}.pdf')
+if args.savefig == 'y': plt.savefig(f'../plots-data/data_FCS/correlations_FCS_On-{band}.pdf')
 plt.show()
 plt.close('all')
 

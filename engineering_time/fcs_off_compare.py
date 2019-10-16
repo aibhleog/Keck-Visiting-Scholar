@@ -13,14 +13,23 @@ from scipy.optimize import curve_fit
 import matplotlib.gridspec as gd
 import matplotlib.patheffects as PathEffects
 from current_model import * # current model written up by Taylor
+import argparse
+
+# reading input information
+parser = argparse.ArgumentParser(description="Looking at the cross-correlations for the engineering data where the internal FCS turned off.",
+			usage='fcs_off_compare.py ...',
+			epilog='Contact Taylor Hutchison at aibhleog@tamu.edu with questions.')
+parser.add_argument('-b','--band',help='Band data were taken in. (J/H)',required=True)
+parser.add_argument('-s','--savefig',help='Save figure? (y/n)')
+args = parser.parse_args()
+
 
 # reading in the data
-band = 'H'  # J or H
+band = args.band
 df = pd.read_csv(f'../KVS-data/individual_FCS_datasets/keck_FCS_Off_{band}_measurements.dat',\
                  delimiter='\t')
 elevations = np.sort(list(set(df.el)))
 rotpposns = np.sort(list(set(df.rotpposn)))
-#elevations = elevations[5:]
 print('Range of elevation:',elevations)
 print('Range of rotpposn:',rotpposns,end='\n\n')
 
@@ -74,7 +83,7 @@ txt = ax.text(0.028,0.9,band,fontsize=18,transform=ax.transAxes,color='C0')
 txt.set_path_effects([PathEffects.withStroke(linewidth=1.5, foreground='k')])
 
 # labels
-ax.set_title('Reference frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}$ $-$ model manually shifted',fontsize=14)
+ax.set_title('FCS is off; Ref. frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}$ $-$ model manually shifted',fontsize=12.8)
 ax.set_ylabel('(y$_0 -$ y) [pixels]')
 ax.set_xticklabels([])
 #ax.set_ylim(-8.6,2.2)
@@ -86,8 +95,7 @@ ax2.set_xlabel('rotpposn [degrees]')
 ax2.set_xticks(rotpposns)
 
 plt.tight_layout()
-#plt.savefig('../plots-data/data_FCS/eng_EL%s.pdf'%el)
-#plt.savefig(f'../plots-data/data_FCS/model_fit_to_data-{band}.pdf')
+if args.savefig == 'y': plt.savefig(f'../plots-data/data_FCS/model_fit_to_data-{band}.pdf')
 plt.show()
 plt.close('all')
 
