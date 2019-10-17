@@ -198,7 +198,7 @@ class Drift:
         Pulling UTC information for a given filename or multiple filenames.
         
         INPUTS ---- filename:   str, name of raw MOSFIRE file to be read in
-        RETURNS --- utc_value:  string or array, UTC information for frames
+        RETURNS --- utc_value:  string or array, UTC information for frame(s)
         '''
         path = self.home+'%s/'%self.date
         
@@ -215,6 +215,31 @@ class Drift:
                 utc.append(head['utc'])
                 
         return utc
+    
+    def get_pa_el(self,filename):
+        '''
+        Pulling PA & Elevation information for a given filename or multiple filenames.
+        
+        INPUTS ---- filename:   str, name of raw MOSFIRE file to be read in
+        RETURNS --- pa:         float or array, rotpposn information for frame(s)
+                    el:         float or array, elevation information for frame(s)
+        '''
+        path = self.home+'%s/'%self.date
+        
+        try: len(filename); one = False # more than one file
+        except TypeError: one = True
+            
+        if one == True:
+            head = fits.getheader(path+filename)
+            pa,el = head['rotpposn'],head['el']
+        else:
+            pa,el = [],[]
+            for i in range(len(filename)):
+                head = fits.getheader(path+filename[i])
+                pa.append(head['rotpposn'])
+                el.append(head['el'])
+                
+        return pa,el
     
     
     # CONVENIENCE FUNCTIONS

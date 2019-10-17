@@ -113,15 +113,27 @@ def drift_map(frame,offset,drift_obj,star=True,savefig=False,see=True):
     if star == True: title = 'Star Drift Map'
     else: title = 'Slit Drift Map'
     
+    # making the list of files
+    mfile = 'm'+dt.strptime(drift_obj.date,'%Y%b%d').strftime('%y%m%d') # start of the file names
+    mfiles_A, mfiles_B = [mfile+f'_{fr:04d}.fits' for fr in frame[0]],[mfile+f'_{fr:04d}.fits' for fr in frame[1]]
+    # getting the pa and el information
+    pa_A, el_A = drift_obj.get_pa_el(mfiles_A)
+    pa_B, el_B = drift_obj.get_pa_el(mfiles_B)
+    
+    # making figure
     plt.figure(figsize=(9,6))
-    plt.scatter(frame[0],offset[0],edgecolor='k',s=60,label='Nod A')
-    plt.scatter(frame[1],offset[1],edgecolor='k',marker='^',s=60,label='Nod B')
+    plt.scatter(frame[0],offset[0],edgecolor='k',c=el_A,cmap='viridis',s=60,label='Nod A')
+    plt.scatter(frame[1],offset[1],edgecolor='k',c=el_B,cmap='viridis',marker='^',s=60,label='Nod B')
 
     plt.text(0.025,0.05,'Mask: %s'%(drift_obj.mask),\
              transform=plt.gca().transAxes,fontsize=15)
     plt.text(0.025,0.1,'Date: %s'%(drift_obj.date),\
              transform=plt.gca().transAxes,fontsize=16)
 
+    # colorbar
+    cbar = plt.colorbar()
+    cbar.set_label('Elevation [deg]',rotation=270,labelpad=18)
+    
     plt.title(title,fontsize=16)
     plt.legend(loc=2)
     plt.xlabel('frame number')
