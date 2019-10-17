@@ -53,7 +53,7 @@ def get_seeing(drift_obj):
     return [num_A, num_B], [utc_A, utc_B], [seeing_A, seeing_B]
 
 
-def seeing_map(time,seeing,drift_obj,savefig=False):
+def seeing_map(time,seeing,drift_obj,savefig=False,see=True):
     '''
     Produces a seeing map as a function of frame.
     
@@ -88,6 +88,6 @@ def seeing_map(time,seeing,drift_obj,savefig=False):
     
     plt.tight_layout()
     if savefig == True: 
-        plt.savefig(f'plots-data/seeing/seeing_map_{drift_obj.date}_{drift_obj.mask}.png',dpi=300)
-    plt.show()
+        plt.savefig(f'plots-data/seeing/seeing_map_{drift_obj.date}_{drift_obj.mask}.pdf')
+    if see == True: plt.show()
     plt.close('all')

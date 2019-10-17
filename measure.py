@@ -21,11 +21,11 @@ df = pd.read_csv('KVS-data/keck_masks.dat',delimiter='|',
     converters={'star_slit': lambda x: x.split(','), 'star_cols': lambda x: x.split(',')})
 
 
-#for indx in df.index.values: # running through all of it
-for indx in [6]:   
+for indx in df.index.values: # running through all of it
+#for indx in [6]:   
     # -- Creating Drift() object -- #
     test = Drift()
-
+    
     test.home = df.loc[indx,'path']
     test.date = df.loc[indx,'date']
     test.mask = df.loc[indx,'mask']
@@ -37,14 +37,11 @@ for indx in [6]:
     test.col_start = int(df.loc[indx,'star_cols'][0])
     test.col_end = int(df.loc[indx,'star_cols'][1])
     
+    print('Date:', test.date, 'Mask:', test.mask)
+    
     # -- running seeing & drift maps -- #
-    #frame,utc,seeing = get_seeing(drift_obj=test)
-    #seeing_map(utc,seeing,drift_obj=test)#,savefig=True)
-    #star_drift_map(*get_star_drift(drift_obj=test),drift_obj=test)#,savefig=True)
+    frame,utc,seeing = get_seeing(drift_obj=test)
+    seeing_map(utc,seeing,drift_obj=test,savefig=True,see=False)
+    star_drift_map(*get_star_drift(drift_obj=test),drift_obj=test,savefig=True,see=False)
     
-    ref = 'm181125_0215.fits'
-    raw = 'm181125_0240.fits'
-    
-    
-    print(test.cross_correlations(ref,ref))
-    print(test.cross_correlations(ref,raw))
+   

@@ -80,7 +80,7 @@ def get_slit_drift(drift_obj):
     return shifts_A, shifts_B
         
 
-def star_drift_map(frame,offset,drift_obj,savefig=False):
+def star_drift_map(frame,offset,drift_obj,savefig=False,see=True):
     '''
     Produces a star drift map as a function of frame.
     
@@ -109,12 +109,12 @@ def star_drift_map(frame,offset,drift_obj,savefig=False):
 
     plt.tight_layout()
     if savefig == True: 
-        plt.savefig(f'plots-data/star_drift/star_drift_map_{drift_obj.date}_{drift_obj.mask}.png',dpi=300)
-    plt.show()
+        plt.savefig(f'plots-data/star_drift/star_drift_map_{drift_obj.date}_{drift_obj.mask}.pdf')
+    if see == True: plt.show()
     plt.close()
     
 
-def slit_drift_map(frame,drift_obj,savefig=False):
+def slit_drift_map(frame,drift_obj,savefig=False,see=True):
     '''
     Produces a slit drift map as a function of frame. Uses the 
     
@@ -142,8 +142,8 @@ def slit_drift_map(frame,drift_obj,savefig=False):
 
     plt.tight_layout()
     if savefig == True: 
-        plt.savefig(f'plots-data/slit_drift/slit_drift_map_{drift_obj.date}_{drift_obj.mask}.png',dpi=300)
-    plt.show()
+        plt.savefig(f'plots-data/slit_drift/slit_drift_map_{drift_obj.date}_{drift_obj.mask}.pdf')
+    if see == True: plt.show()
     plt.close()
 
     
