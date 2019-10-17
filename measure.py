@@ -41,7 +41,10 @@ for indx in df.index.values: # running through all of it
     
     # -- running seeing & drift maps -- #
     frame,utc,seeing = get_seeing(drift_obj=test)
-    seeing_map(utc,seeing,drift_obj=test,savefig=True,see=False)
-    star_drift_map(*get_star_drift(drift_obj=test),drift_obj=test,savefig=True,see=False)
+    #seeing_map(utc,seeing,drift_obj=test)#,savefig=True,see=False)
+    #drift_map(*get_star_drift(drift_obj=test),drift_obj=test)#,savefig=True,see=False)
     
-   
+    info_A, info_B = get_slit_drift(drift_obj=test)
+    frames,shifts = [info_A[0],info_B[0]],[info_A[1],info_B[1]]
+    drift_map(frames,[shifts[0][1],shifts[1][1]],drift_obj=test,star=False,savefig=True) # marks for slit
+    
