@@ -170,10 +170,13 @@ class Drift:
     
     def cross_correlations(self,reference,filename):
         '''
+        Takes filenames of reference frame & another frame, reads in data, & calculates
+        the shift of the second frame from the reference using cross-correlations.
+        
         INPUTS ---- reference:      str, name of raw MOSFIRE file to use as ref.
                     filename:       str, name of raw MOSFIRE file to be read in
         
-        RETURNS --- xshift,yshift:  (float,float), shift of 
+        RETURNS --- xshift,yshift:  (float,float), shift of frame relative to reference
         '''
         path = self.home+'%s/'%self.date
         ref_frame = fits.getdata(path+reference)
