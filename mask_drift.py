@@ -20,7 +20,7 @@ __version__ = 'Oct2019'
 import pandas as pd
 from drift import *
 
-def get_drift(drift_obj):
+def get_star_drift(drift_obj):
     '''
     Finds the peak of the emission (spatially) for a star in a mask, 
     measures the drift by comparing every raw frame to the spatial

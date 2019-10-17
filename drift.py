@@ -17,6 +17,8 @@ import matplotlib.patheffects as PathEffects
 from scipy.optimize import curve_fit
 from datetime import datetime as dt
 from astropy.stats import sigma_clip
+import image_registration as ir # github.com/keflavich/image_registration
+import collapse_profile as coll # written by TAH
 import pandas as pd
 import shutil
 import os
@@ -106,6 +108,11 @@ class Drift:
     def cut_out(self,filename):
         '''
         Creates the cutout for the star's 2D spectrum.
+        
+        NOTE: when the new code is implemented here (see collapse_profile.py), the 2D cutout
+        returned will be used for the seeing map and the star drift tracker (like usual).
+        HOWEVER, the "blank2D" things in the collapse_profile.py module will be used to run
+        cross-correlations & return the shift of the mask.
         '''
         path = self.home+'%s/'%self.date  
         
@@ -126,6 +133,10 @@ class Drift:
         '''
         Creating the mask star's profile given a handful of columns to sum 
         over (to increase the S/N), this function fits this profile.
+        
+        NOTE: when the new code is implemented here (see collapse_profile.py), this function
+        will have the skylines masked out and the whole thing will be collapsed.  Then, we
+        won't need to specify the columns.
         
         INPUTS ---- filename:   str, name of raw MOSFIRE file to be read in
                     row_start:  int, the yvalue for the bottom of the star's slit
@@ -156,6 +167,28 @@ class Drift:
 
         mean, A, sig, B = popt
         return mean, A, sig
+    
+    def cross_correlations(self,reference,filename):
+        '''
+        INPUTS ---- reference:      str, name of raw MOSFIRE file to use as ref.
+                    filename:       str, name of raw MOSFIRE file to be read in
+        
+        RETURNS --- xshift,yshift:  (float,float), shift of 
+        '''
+        path = self.home+'%s/'%self.date
+        ref_frame = fits.getdata(path+reference)
+        raw_frame = fits.getdata(path+filename)
+        
+        # masking out rows with signal in both
+        # default sigma clipping: upper_sig=2.5, lower_sig=5
+        ref_frame = coll.return_blank2D(ref_frame)
+        raw_frame = coll.return_blank2D(raw_frame)
+        
+        # running the cross-correlation
+        xshift,yshift = ir.cross_correlation_shifts(ref_frame,raw_frame)
+        return xshift,yshift # shift from ref_frame to raw_frame
+                             # essentially tracks the drift of the slit
+        
     
     def get_UTC(self,filename):
         '''
