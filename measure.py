@@ -11,7 +11,6 @@ __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
 __version__ = 'Oct2019'
 
-import pandas as pd
 from drift import *
 from mask_drift import *
 from seeing_map import *
@@ -39,7 +38,13 @@ for indx in [6]:
     test.col_end = int(df.loc[indx,'star_cols'][1])
     
     # -- running seeing & drift maps -- #
-    frame,utc,seeing = get_seeing(drift_obj=test)
+    #frame,utc,seeing = get_seeing(drift_obj=test)
     #seeing_map(utc,seeing,drift_obj=test)#,savefig=True)
-
-    #drift_map(*get_drift(drift_obj=test),drift_obj=test)#,savefig=True)
+    #star_drift_map(*get_star_drift(drift_obj=test),drift_obj=test)#,savefig=True)
+    
+    ref = 'm181125_0215.fits'
+    raw = 'm181125_0240.fits'
+    
+    
+    print(test.cross_correlations(ref,ref))
+    print(test.cross_correlations(ref,raw))
