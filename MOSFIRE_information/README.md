@@ -8,3 +8,4 @@ This is mostly just a storage location for all of Taylor's random notes about MO
 | - | -------------------------------- | ----------- | -------- |
 | 1 | MOSFIRE Drift Corrected          | 2015-Apr-29 | Drift over time, helped by Chuck Steidel & MOSDEF team to diagnose problem; guider flexure & DAR culprits. |
 | 2 | Drift in spectroscopic exposures | 2014-May-15 | 1 pix/hr drift measured by observers |
+
