@@ -19,50 +19,7 @@ __version__ = 'Oct2019'
 
 import pandas as pd
 from drift import *
-import matplotlib
-
-
-# -------------------------------------------------------------------------- #
-
-def make_colormap(cen,dmin,dmax,size):
-	# coming up with a range that helps us figure out where the color is
-	t = np.linspace(dmin,dmax,size)
-	s = np.linspace(0,1,size)
-	n = size*10
-
-	x = cen/(dmax-dmin)
-	print('x: %s, Min: %s, Max: %s\n'%(x,dmin,dmax))
-
-	lower = plt.cm.Reds(np.linspace(0.6,0,n*round(x-0.01*x,2)))
-	#focus = plt.cm.rainbow(np.ones(3)*x)
-	upper = plt.cm.Blues(np.linspace(0,1,n*round(1-(x+0.01*x),2)))
-	#colors = np.vstack((lower, focus, upper))
-	colors = np.vstack((lower, upper))
-	tmap = matplotlib.colors.LinearSegmentedColormap.from_list('taylor', colors)
-	return tmap
-
-class FixPointNormalize(matplotlib.colors.Normalize):
-    """ 
-    Inspired by https://stackoverflow.com/questions/20144529/shifted-colorbar-matplotlib
-    Subclassing Normalize to obtain a colormap with a fixpoint 
-    somewhere in the middle of the colormap.
-
-    This may be useful for a `terrain` map, to set the "sea level" 
-    to a color in the blue/turquise range as shown in example:
-	https://stackoverflow.com/questions/40895021/python-equivalent-for-matlabs-demcmap-elevation-appropriate-colormap
-    """
-    def __init__(self, vmin=None, vmax=None, fixme=5, fixhere=0.26, clip=False):
-		# fixme is the fix point of the colormap (in data units)
-        self.fixme = fixme
-        # fixhere is the color value in the range [0,1] that should represent fixme
-        self.fixhere = fixhere
-        matplotlib.colors.Normalize.__init__(self, vmin, vmax, clip)
-
-    def __call__(self, value, clip=None):
-        x, y = [self.vmin, self.fixme, self.vmax], [0, self.fixhere, 1]
-        return np.ma.masked_array(np.interp(value, x, y)) 
-# -------------------------------------------------------------------------- #
-
+from fixing_colorbar import *
 
 def get_star_drift(drift_obj):
     '''
@@ -169,7 +126,7 @@ def drift_map(frame,offset,drift_obj,star=True,savefig=False,see=True):
 	# modifying colormap
 	cen, dmin, dmax = 35,20,90
 	x = cen / (dmax-dmin)
-	tmap = make_colormap(35,20,90,len(offset[0]))
+	tmap = elevation_cmap(35,20,90,len(offset[0]))
 	norm = FixPointNormalize(fixme=35,fixhere=x,vmin=20,vmax=90)
 
 	# making figure
