@@ -26,8 +26,7 @@ for indx in [6]:
 	# -- Creating Drift() object -- #
 	test = Drift()
 	
-	test.home = '/home/aibhleog/Desktop/observing/'
-	#test.home = df.loc[indx,'path']
+	test.home = df.loc[indx,'path']
 	test.date = df.loc[indx,'date']
 	test.mask = df.loc[indx,'mask']
 	test.dither = df.loc[indx,'dither']
