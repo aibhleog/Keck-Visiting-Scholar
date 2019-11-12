@@ -3,7 +3,8 @@ This code is just used to make the custom colorbars for the seeing and drift map
 '''
 
 import numpy as np
-import matplolib
+import matplotlib
+import matplotlib.pyplot as plt
 
 def elevation_cmap(cen,dmin,dmax,size):
 	'''

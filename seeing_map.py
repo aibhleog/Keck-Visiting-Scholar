@@ -3,10 +3,10 @@ Module for measuring and displaying the seeing for a given mask.
 The following methods exist in this module:
 
 	get_seeing() -- takes a Drift() object and returns seeing
-	                measurements for both offsets (assumes ABAB)
+		            measurements for both offsets (assumes ABAB)
 	seeing_map() -- given frame numbers and measured seeing,
-	                returns a map of the seeing for both nods
-	                as a function of frame number (assumes ABAB)
+		            returns a map of the seeing for both nods
+		            as a function of frame number (assumes ABAB)
 
 Future upgrades:
 > changing seeing_map() to plot UTC vs seeing
@@ -22,6 +22,7 @@ import matplotlib.dates as md
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from pandas.plotting import register_matplotlib_converters
 from drift import *
+from fixing_colorbar import *
 import matplotlib
 
 register_matplotlib_converters()
@@ -30,12 +31,12 @@ def get_seeing(drift_obj):
 	'''
 	Fits a gaussian to each raw frame's star and produces the 
 	seeing measurements.
-	
+
 	INPUTS ---- home:   path to directory containing MOSFIRE data
-	            drift_obj:  a drift_obj() object with defined variables
-	
+		        drift_obj:  a drift_obj() object with defined variables
+
 	RETURNS --- eight arrays (grouped 2 & 2 & 2 & 2) describing frame 
-	            number, UTC, seeing, & airmass for each nod (assumes ABAB)
+		        number, UTC, seeing, & airmass for each nod (assumes ABAB)
 	'''
 	nod_A, nod_B = drift_obj.split_dither()
 	utc_A, utc_B = drift_obj.get_UTC(nod_A), drift_obj.get_UTC(nod_B)
@@ -60,7 +61,7 @@ def seeing_map(time,seeing,airmass,drift_obj,savefig=False,see=True):
 	Produces a seeing map as a function of frame.
 
 	INPUTS ---- frame:      2XN array, ex. [nod_A,nod_B]
-			    seeing:     2XN array, ex. [seeing_A,seeing_B]
+				seeing:     2XN array, ex. [seeing_A,seeing_B]
 
 	RETURNS --- plot of the seeing map
 	'''
@@ -83,15 +84,16 @@ def seeing_map(time,seeing,airmass,drift_obj,savefig=False,see=True):
 	plt.gca().xaxis.set_major_formatter(md.DateFormatter('%H:%M'))
 
 	plt.scatter(time[0],seeing[0],c=airmass[0],cmap=tmap,norm=norm,edgecolor='k',s=60,label='Nod A')
-	plt.scatter(time[1],seeing[1],c=airmass[0],cmap=tmap,norm=norm,edgecolor='k',marker='^',s=60,label='Nod B')
+	plt.scatter(time[1],seeing[1],c=airmass[1],cmap=tmap,norm=norm,edgecolor='k',marker='^',s=60,label='Nod B')
 
 	plt.text(0.975,0.94,'Mask: %s'%(drift_obj.mask),ha='right',\
 			 transform=plt.gca().transAxes,fontsize=15)
 	plt.text(0.975,0.88,'Date: %s'%(drift_obj.date),ha='right',\
 			 transform=plt.gca().transAxes,fontsize=16)
 
+	
 	# colorbar
-	cbar = plt.colorbar(bbox_to_anchor=(1,0.3))
+	cbar = plt.colorbar()#(bbox_to_anchor=(1,0.3))
 	cbar.set_label('Airmass',rotation=270,labelpad=18)
 	cbar.ax.invert_yaxis()
 
