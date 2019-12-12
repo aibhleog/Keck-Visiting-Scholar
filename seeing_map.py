@@ -100,7 +100,7 @@ def seeing_map(time,seeing,airmass,drift_obj,savefig=False,see=True):
 	plt.legend(loc=2)
 	plt.xlabel('UTC')
 	plt.ylabel('seeing ["]')
-	plt.ylim(0.4,2)
+	plt.ylim(0.3,2)
 	plt.xlim(time[0][0],time[1][-1])
 
 	plt.tight_layout()

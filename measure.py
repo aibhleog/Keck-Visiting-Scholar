@@ -9,7 +9,7 @@ Code used to run the modules in this directory.  To do so, will read in the data
 
 __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
-__version__ = 'Oct2019'
+__version__ = 'Dec2019'
 
 from drift import *
 from mask_drift import *
@@ -44,7 +44,7 @@ for indx in [len(df)-1]:
 	seeing_map(utc,seeing,airmass,drift_obj=test,savefig=True)#,see=False)
 	drift_map(*get_star_drift(drift_obj=test),drift_obj=test,savefig=True)#,see=False)
 	
-	info_A, info_B = get_slit_drift(drift_obj=test)
-	frames,shifts = [info_A[0],info_B[0]],[info_A[1],info_B[1]]
-	drift_map(frames,[shifts[0][1],shifts[1][1]],drift_obj=test,star=False,savefig=True) # marks for slit
+	#info_A, info_B = get_slit_drift(drift_obj=test)
+	#frames,shifts = [info_A[0],info_B[0]],[info_A[1],info_B[1]]
+	#drift_map(frames,[shifts[0][1],shifts[1][1]],drift_obj=test,star=False,savefig=True) # marks for slit
     

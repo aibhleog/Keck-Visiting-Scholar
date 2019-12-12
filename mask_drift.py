@@ -150,7 +150,7 @@ def drift_map(frame,offset,drift_obj,star=True,savefig=False,see=True):
 	if min(offset[0]) < -0.2 and min(offset[0]) > -2:
 	    plt.ylim(min(offset[0])+min(offset[0])*0.3,0.4)
 	else:
-	    plt.ylim(-0.2,0.4)
+		plt.ylim(-0.2,0.4)
 
 	plt.tight_layout()
 	if savefig == True: 
