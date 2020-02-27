@@ -9,7 +9,7 @@ Code used to run the modules in this directory.  To do so, will read in the data
 
 __author__ = 'Taylor Hutchison'
 __email__ = 'aibhleog@tamu.edu'
-__version__ = 'Dec2019'
+__version__ = 'Feb2020'
 
 from drift import *
 from mask_drift import *
