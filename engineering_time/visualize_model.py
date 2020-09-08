@@ -10,7 +10,8 @@ import matplotlib.animation as animation
 from current_model import * # current model written up by Taylor Hutchison
 
 def get_PA_Z(num):
-    df = pd.read_csv('../KVS-data/keck_fcs_measurements.dat',delimiter='\s+')
+    #df = pd.read_csv('../KVS-data/keck_fcs_measurements.dat',delimiter='\s+')
+    df = pd.read_csv('../KVS-data/engineering_fcs_info.dat',delimiter='\t')
     elevations = np.sort(list(set(df.el)))
     rotpposns = np.sort(list(set(df.rotpposn)))
 
@@ -37,6 +38,9 @@ def xyshift(num,savefig=True):
     for r in range(len(PA)):
         xshift,yshift = flexure_comp(np.radians(PA),np.radians(Z[r]),'J')
         plt.plot(x0-xshift,y0-yshift,color='k')
+       
+    plt.text(0.04,0.06,'reference frame, PA: -90$^o$, Z: 45$^o$',\
+             transform=plt.gca().transAxes,fontsize=17)
 
     #plt.colorbar()
     plt.xlabel('(x$_0 -$ x) [pixels]')
@@ -48,25 +52,25 @@ def xyshift(num,savefig=True):
     plt.close('all')
 
 def yshift_rot(num,savefig=True):
-	plt.figure(figsize=(9,6))
+    plt.figure(figsize=(9,6))
 
-	PA,Z = get_PA_Z(num)
-	cs = colors(num)
-	x0,y0 = flexure_comp(-90,45,'J') # reference frame
+    PA,Z = get_PA_Z(num)
+    cs = colors(num)
+    x0,y0 = flexure_comp(-90,45,'J') # reference frame
 
-	for r in range(len(PA)):
-	    xshift,yshift = flexure_comp(np.radians(PA),np.radians(Z[r]),'J')
-	    plt.scatter(PA,y0-yshift,edgecolor='k',s=60, color=cs[r])
+    for r in range(len(PA)):
+        xshift,yshift = flexure_comp(np.radians(PA),np.radians(Z[r]),'J')
+        plt.scatter(PA,y0-yshift,edgecolor='k',s=60, color=cs[r])
 
-	plt.xlabel('rotpposn [degrees]')
-	plt.ylabel('(y$_0 -$ y) [pixels]')
-	
-	plt.tight_layout()
-	if savefig == True: plt.savefig('../plots-data/data_FCS/model_yshift_rot.pdf')
-	plt.show()
-	plt.close('all')
+    plt.xlabel('rotpposn [degrees]')
+    plt.ylabel('(y$_0 -$ y) [pixels]')
 
-def animate(num):
+    plt.tight_layout()
+    if savefig == True: plt.savefig('../plots-data/data_FCS/model_yshift_rot.pdf')
+    plt.show()
+    plt.close('all')
+
+def animate(num,ref=False):
     '''
     This function animates the model given a range of PA and Zenith angle.
 
@@ -77,20 +81,30 @@ def animate(num):
     '''
     fig = plt.figure(figsize=(9,6))
     ax = plt.gca()
-    ax = plt.axes(xlim=(-7,5),ylim=(-7,7))
-
+    if ref == True: 
+        ax = plt.axes(xlim=(-0.85,5.2),ylim=(-10.3,1.5))
+        name = 'shifts_with_reference'
+    else: 
+        ax = plt.axes(xlim=(-7,5),ylim=(-7,7))
+        name = 'shifts'
+        
     # initalizing plotting variables
     PA,Z = get_PA_Z(num)
     blank = np.zeros((2,len(PA)))
-
+    if ref == True: 
+        x0,y0 = flexure_comp(-90,45,'J') # reference frame
+        ax.text(0.04,0.06,'reference frame, PA: -90$^o$, Z: 45$^o$',\
+             transform=ax.transAxes,fontsize=17)
+        
     line = plt.scatter(blank[0],blank[1],edgecolor='k',c=PA,cmap='viridis',s=120)
     tex = plt.text(0.97,0.91,'',ha='right',transform=ax.transAxes,fontsize=20)
 
     # plotting the outline of the entire model range
     for i in range(len(Z)):
         new_x, new_y = flexure_comp(np.radians(PA),np.radians(Z[i]),'J')
-        plt.plot(new_x,new_y,color='k',zorder=0,lw=1)
-
+        if ref == True: plt.plot(x0-new_x,y0-new_y,color='k',zorder=0,lw=1)
+        else: plt.plot(new_x,new_y,color='k',zorder=0,lw=1)
+            
     # colorbar legend
     ax.text(1.2,0.25,'Zenith ang. [degrees]',rotation=270,fontsize=18,transform=ax.transAxes)
     plt.colorbar()
@@ -105,7 +119,8 @@ def animate(num):
     # the function that will actually be changing things in the animation
     def shift(e):
         new_x, new_y = flexure_comp(np.radians(PA[e]),np.radians(Z),'J')
-        line.set_offsets(np.stack((new_x,new_y),axis=1))
+        if ref == True: line.set_offsets(np.stack((x0-new_x,y0-new_y),axis=1))
+        else: line.set_offsets(np.stack((new_x,new_y),axis=1))
         tex.set_text('rotpposn: %.2f$^o$' %round(PA[e],2))
         return line,tex,
 
@@ -113,11 +128,15 @@ def animate(num):
     anim = animation.FuncAnimation(fig,shift,init_func=init,\
         frames=np.arange(len(Z)),interval=100,blit=True)
 
-    ax.set_xlabel('(x$_0 -$ x) [pixels]')
-    ax.set_ylabel('(y$_0 -$ y) [pixels]')
+    if ref == True:
+        ax.set_xlabel('(x$_0 -$ x) [pixels]')
+        ax.set_ylabel('(y$_0 -$ y) [pixels]')
+    else:
+        ax.set_xlabel('(x) [pixels]')
+        ax.set_ylabel('(y) [pixels]')
 
     plt.tight_layout()
-    anim.save('../plots-data/data_FCS/shifts.gif', fps=5, writer='imagemagick',dpi=100) # this will take a while to make
+    anim.save(f'../plots-data/data_FCS/{name}.gif', fps=5, writer='imagemagick',dpi=100) # this will take a while to make
     #plt.show() # doesn't work in Jupyter Lab
     plt.close('all')
 
