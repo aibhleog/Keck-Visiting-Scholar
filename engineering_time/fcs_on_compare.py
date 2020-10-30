@@ -58,19 +58,22 @@ for e in range(len(elevations)):
         ax2.scatter(subdf.rotpposn,subdf.yshift,color=colors[e],s=60,edgecolor='k',zorder=5,\
                   label='El: %s'%el)
 
-ax.axhline(0,ls=':',color='k')
+# ax.axhline(0,ls=':',color='k')
 txt = ax.text(0.028,0.08,band,fontsize=18,transform=ax.transAxes,color='C0')
 txt.set_path_effects([PathEffects.withStroke(linewidth=1.5, foreground='k')])
     
 # labels
-ax.set_title('FCS is on; Ref. frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}$',fontsize=14)
+# ax.set_title('FCS is on; Ref. frame: EL=45$^\mathrm{o}$ ROTPPOSN=-90$^\mathrm{o}$',fontsize=14)
 ax.set_ylabel('(y$_0 -$ y) [pixels]')
+# plt.text(-0.1,-0.2,'(y$_0 -$ y) [pixels]',transform=ax.transAxes,\
+#         fontsize=15,rotation=90,ha='right')
 ax.set_xticklabels([])
 ax.set_xticks(rotpposns)
 ax.legend(loc=3,bbox_to_anchor=(1,0),fontsize=12)
 
 # labels
 #ax2.set_ylabel('res')
+ax2.set_ylabel('(y$_0 -$ y) [pixels]')
 ax2.set_xlabel('rotpposn [degrees]')
 ax2.set_xticks(rotpposns)
 ax2.legend(loc=3,bbox_to_anchor=(1,0),fontsize=12)

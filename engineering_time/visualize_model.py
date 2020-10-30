@@ -29,9 +29,10 @@ def colors(num):
     cmap = plt.get_cmap('viridis')
     return cmap(np.linspace(0,1.2,num+1))
 
-def xyshift(num,savefig=True):
-    plt.figure(figsize=(9,6))
-
+def xyshift(num,savefig=True,figsize=False):
+    if figsize == False: plt.figure(figsize=(9,6))
+    else: plt.figure(figsize=figsize)
+        
     PA,Z = get_PA_Z(num)
     x0,y0 = flexure_comp(-90,45,'J') # reference frame
 
@@ -40,7 +41,7 @@ def xyshift(num,savefig=True):
         plt.plot(x0-xshift,y0-yshift,color='k')
        
     plt.text(0.04,0.06,'reference frame, PA: -90$^o$, Z: 45$^o$',\
-             transform=plt.gca().transAxes,fontsize=17)
+             transform=plt.gca().transAxes,fontsize=16)
 
     #plt.colorbar()
     plt.xlabel('(x$_0 -$ x) [pixels]')
