@@ -72,7 +72,6 @@ def seeing_map(time,seeing,airmass,drift_obj,savefig=False,see=True):
 	time[1] = [dt.strptime(i,'%H:%M:%S.%f') for i in time[1]]
 	#print(time[0][0],time[1][0])
 
-
 	# modifying colormap
 	cen, dmin, dmax = 2,1,3.5
 	x = cen / (dmax-dmin)

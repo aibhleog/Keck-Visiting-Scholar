@@ -18,8 +18,8 @@ def elevation_cmap(cen,dmin,dmax,size):
 	x = cen/(dmax-dmin) # helps in centering the zeropoint
 	#print('x: %s, Min: %s, Max: %s\n'%(x,dmin,dmax))
 
-	lower = plt.cm.Reds(np.linspace(0.6,0,n*round(x-0.01*x,2)))
-	upper = plt.cm.Blues(np.linspace(0,1,n*round(1-(x+0.01*x),2)))
+	lower = plt.cm.Reds(np.linspace(0.6,0,int(n*round(x-0.01*x,2))))
+	upper = plt.cm.Blues(np.linspace(0,1,int(n*round(1-(x+0.01*x),2))))
 	colors = np.vstack((lower, upper))
 	tmap = matplotlib.colors.LinearSegmentedColormap.from_list('elevation', colors)
 	return tmap
@@ -37,8 +37,8 @@ def airmass_cmap(cen,dmin,dmax,size):
 	x = cen/(dmax-dmin)-0.6 # helps in centering the zeropoint
 	#print('x: %s, Min: %s, Max: %s\n'%(x,dmin,dmax))
 
-	upper = plt.cm.Reds(np.linspace(0,0.6,n*round(x-0.01*x,2)))
-	lower = plt.cm.Blues(np.linspace(1,0,n*round(1-(x+0.01*x),2)))
+	upper = plt.cm.Reds(np.linspace(0,0.6,int(n*round(x-0.01*x,2))))
+	lower = plt.cm.Blues(np.linspace(1,0,int(n*round(1-(x+0.01*x),2))))
 	colors = np.vstack((lower, upper))
 	tmap = matplotlib.colors.LinearSegmentedColormap.from_list('airmass', colors)
 	return tmap

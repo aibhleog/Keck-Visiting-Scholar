@@ -96,6 +96,16 @@ def get_slit_drift(drift_obj):
         #else: i += 5
         i += 1
         
+    # saving data to files
+    # nod A
+    zipit = list(zip(framenum_A,shifts_A[0],shifts_A[1]))
+    np.savetxt(f'plots-data/slit_drift/slit_drift_{drift_obj.date}_{drift_obj.mask}_nodA.txt',\
+              zipit,header='frame\toffset',delimiter='\t')
+    # nod B
+    zipit = list(zip(framenum_B,shifts_B[0],shifts_B[1]))
+    np.savetxt(f'plots-data/slit_drift/slit_drift_{drift_obj.date}_{drift_obj.mask}_nodB.txt',\
+              zipit,header='frame\toffset',delimiter='\t')
+        
     # the calculated shifts (from reference frame) for both nods
     return [framenum_A,shifts_A], [framenum_B,shifts_B]
         
