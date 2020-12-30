@@ -22,7 +22,7 @@ df = pd.read_csv('KVS-data/keck_masks.dat',delimiter='|',
 
 
 #for indx in df.index.values: # running through all of it
-for indx in [6,11]:#[len(df)-1]:   
+for indx in [len(df)-1]:   
 	# -- Creating Drift() object -- #
 	test = Drift()
 	
@@ -45,11 +45,11 @@ for indx in [6,11]:#[len(df)-1]:
 	#test.show_me_all_profiles(nod_B)	
 	
 	# -- running seeing & drift maps -- #
-	#frame,utc,seeing,airmass = get_seeing(drift_obj=test)
-	#seeing_map(utc,seeing,airmass,drift_obj=test,savefig=True,see=False)
-	#drift_map(*get_star_drift(drift_obj=test),drift_obj=test,savefig=True,see=False)
+	frame,utc,seeing,airmass = get_seeing(drift_obj=test)
+	seeing_map(utc,seeing,airmass,drift_obj=test,savefig=True)#,see=False)
+	drift_map(*get_star_drift(drift_obj=test),drift_obj=test,savefig=True)#,see=False)
 	
-	info_A, info_B = get_slit_drift(drift_obj=test)
-	frames,shifts = [info_A[0],info_B[0]],[info_A[1],info_B[1]]
-	drift_map(frames,[shifts[0][1],shifts[1][1]],drift_obj=test,star=False,savefig=True) # marks for slit
+	#info_A, info_B = get_slit_drift(drift_obj=test)
+	#frames,shifts = [info_A[0],info_B[0]],[info_A[1],info_B[1]]
+	#drift_map(frames,[shifts[0][1],shifts[1][1]],drift_obj=test,star=False,savefig=True) # marks for slit
     
