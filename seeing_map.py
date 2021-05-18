@@ -9,7 +9,6 @@ The following methods exist in this module:
 		            as a function of frame number (assumes ABAB)
 
 Future upgrades:
-> changing seeing_map() to plot UTC vs seeing
 > overlay airmass
 '''
 
