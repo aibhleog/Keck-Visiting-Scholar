@@ -22,7 +22,7 @@ df = pd.read_csv('KVS-data/keck_masks.dat',delimiter='|',
 
 
 #for indx in df.index.values: # running through all of it
-for indx in [len(df)-4]:   
+for indx in [len(df)-1]:   
     # -- Creating Drift() object -- #
     test = Drift()
 
@@ -46,8 +46,9 @@ for indx in [len(df)-4]:
 
     # -- running seeing & drift maps -- #
     frame,utc,seeing,airmass = get_seeing(drift_obj=test)
-    seeing_map(utc,seeing,airmass,drift_obj=test,savefig=False,see=False)
-    drift_map(*get_star_drift(drift_obj=test),drift_obj=test,savefig=False,see=False)
+    seeing_map(utc,seeing,airmass,drift_obj=test,savefig=True,see=False)
+    print(seeing)
+    #drift_map(*get_star_drift(drift_obj=test),drift_obj=test,savefig=False,see=False)
 
 #     info_A, info_B = get_slit_drift(drift_obj=test)
 #     frames,shifts = [info_A[0],info_B[0]],[info_A[1],info_B[1]]
@@ -57,7 +58,7 @@ for indx in [len(df)-4]:
     # (using pandas because my brain works that way)
     # ----------------------------------------------
     # seeing map (with airmass)
-    time_only = [[i.strftime('%H:%M:%S.%f') for i in utc[0]],
+    '''time_only = [[i.strftime('%H:%M:%S.%f') for i in utc[0]],
                  [i.strftime('%H:%M:%S.%f') for i in utc[1]]]
 
     nod = np.chararray((len(frame[0])))
@@ -72,6 +73,6 @@ for indx in [len(df)-4]:
     ds = pd.concat([dsA,dsB])
     ds.sort_values(by=['frame'],inplace=True)
     ds.reset_index(inplace=True,drop=True)
-    
-    ds.to_csv(f'plots-data/seeing/seeing_map_{test.date}_{test.mask}.txt',
-                  sep='\t',index=False)
+    '''
+    #ds.to_csv(f'plots-data/seeing/seeing_map_{test.date}_{test.mask}.txt',
+    #              sep='\t',index=False)

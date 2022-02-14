@@ -20,6 +20,7 @@ import pandas as pd
 import matplotlib.dates as md
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from pandas.plotting import register_matplotlib_converters
+from datetime import timedelta
 from drift import *
 from fixing_colorbar import *
 import matplotlib
@@ -81,8 +82,8 @@ def seeing_map(time,seeing,airmass,drift_obj,savefig=False,see=True):
 	plt.figure(figsize=(11,6))
 	plt.gca().xaxis.set_major_formatter(md.DateFormatter('%H:%M'))
 
-	plt.scatter(time[0],seeing[0],c=airmass[0],cmap=tmap,norm=norm,edgecolor='k',s=60,label='Nod A')
-	plt.scatter(time[1],seeing[1],c=airmass[1],cmap=tmap,norm=norm,edgecolor='k',marker='^',s=60,label='Nod B')
+	plt.scatter(time[0],seeing[0],c=airmass[0],cmap=tmap,norm=norm,edgecolor='k',s=80,label='Nod A')
+	plt.scatter(time[1],seeing[1],c=airmass[1],cmap=tmap,norm=norm,edgecolor='k',marker='^',s=80,label='Nod B')
 
 	plt.text(0.975,0.94,'Mask: %s'%(drift_obj.mask),ha='right',\
 			 transform=plt.gca().transAxes,fontsize=15)
@@ -91,7 +92,7 @@ def seeing_map(time,seeing,airmass,drift_obj,savefig=False,see=True):
 
 	
 	# colorbar
-	cbar = plt.colorbar()#(bbox_to_anchor=(1,0.3))
+	cbar = plt.colorbar(pad=0.02)#(bbox_to_anchor=(1,0.3))
 	cbar.set_label('Airmass',rotation=270,labelpad=18)
 	cbar.ax.invert_yaxis()
 
@@ -99,7 +100,14 @@ def seeing_map(time,seeing,airmass,drift_obj,savefig=False,see=True):
 	plt.xlabel('UTC')
 	plt.ylabel('seeing ["]')
 	plt.ylim(0.3,2)
-	plt.xlim(time[0][0],time[1][-1])
+	
+	# setting the xrange
+	xlims = []
+	if time[0][0] > time[1][0]: xlims.append(time[1][0])
+	else: xlims.append(time[0][0])
+	if time[0][-1] > time[1][-1]: xlims.append(time[0][-1])
+	else: xlims.append(time[1][-1])
+	plt.xlim(xlims[0]-timedelta(minutes=2),xlims[1]+timedelta(minutes=2))
 
 	plt.tight_layout()
 	if savefig == True: 
